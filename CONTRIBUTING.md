@@ -25,10 +25,7 @@ plugin's existing README; do not fill in a second description or an access quest
 ```json
 {
   "id": "example",
-  "name": "Example",
-  "summary": "One sentence about what it adds to a deck.",
   "version": "0.1.0",
-  "author": "Example contributors",
   "license": "MIT",
   "repo": "https://github.com/example/zdeck-example",
   "runtime": { "language": "node", "minimum": "22.18.0" },
@@ -38,6 +35,9 @@ plugin's existing README; do not fill in a second description or an access quest
   "release": null
 }
 ```
+
+`name`, `summary`, and `author` are optional presentation metadata. The name defaults to the ID;
+an omitted summary or author is not displayed. Do not add a publisher identity that is not known.
 
 ## 3. Check locally
 

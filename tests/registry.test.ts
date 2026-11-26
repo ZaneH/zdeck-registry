@@ -45,16 +45,24 @@ describe("registry validation", () => {
     }
   });
 
-  it("rejects a record missing its name", () => {
+  it("normalizes missing presentation fields without asserting identity", () => {
     const plugin = validPlugin();
     delete plugin.name;
-    expectRejected(plugin);
+    delete plugin.summary;
+    delete plugin.author;
+    const result = parsePlugin(plugin);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.registry.plugins[0]).toMatchObject({ name: "spotify", summary: "", author: "" });
+    }
   });
 
-  it("rejects an empty summary and control characters", () => {
-    const empty = validPlugin();
-    empty.summary = "   ";
-    expectRejected(empty);
+  it("rejects invalid presentation fields when present", () => {
+    for (const key of ["name", "summary", "author"]) {
+      const empty = validPlugin();
+      empty[key] = "   ";
+      expectRejected(empty);
+    }
     const controlled = validPlugin();
     controlled.summary = "bad\u0007summary";
     expectRejected(controlled);

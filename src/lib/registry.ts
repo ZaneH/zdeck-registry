@@ -84,8 +84,10 @@ function parsePlugin(value: unknown, availableReadmes: ReadonlySet<string>): Plu
     "runtime", "tags", "readme", "status", "release",
   ])) return null;
   if (typeof value.id !== "string" || !ID.test(value.id)
-    || !text(value.name, 80) || !text(value.summary, 200)
-    || !text(value.author, 80) || !text(value.license, 40) || !httpsUrl(value.repo)
+    || (value.name !== undefined && !text(value.name, 80))
+    || (value.summary !== undefined && !text(value.summary, 200))
+    || (value.author !== undefined && !text(value.author, 80))
+    || !text(value.license, 40) || !httpsUrl(value.repo)
     || typeof value.readme !== "string" || !README.test(value.readme)
     || !availableReadmes.has(value.readme)
     || !STATUSES.includes(value.status as PluginStatus)) return null;
@@ -107,9 +109,12 @@ function parsePlugin(value: unknown, availableReadmes: ReadonlySet<string>): Plu
   if (status !== "published" && release) return null;
 
   return {
-    id: value.id as string, name: value.name as string, summary: value.summary as string,
+    id: value.id as string,
+    name: value.name === undefined ? value.id : value.name as string,
+    summary: value.summary === undefined ? "" : value.summary as string,
     ...(version === undefined ? {} : { version }),
-    author: value.author as string, license: value.license as string, repo: value.repo as string,
+    author: value.author === undefined ? "" : value.author as string,
+    license: value.license as string, repo: value.repo as string,
     ...(value.platforms === undefined ? {} : { platforms: value.platforms as string[] }),
     ...(runtime ? { runtime } : {}),
     ...(value.tags === undefined ? {} : { tags: value.tags as string[] }),

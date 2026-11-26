@@ -46,10 +46,12 @@ safe README behavior, no external requests, and a narrow viewport. It saves a sc
 4. For a real release, set `"status": "published"` and add the `release` object. Until then use
    `"preview"` or `"in-development"` with `"release": null`.
 
-Required fields are `id`, `name`, `summary`, `author`, `license`, `repo`, `readme`, `status`, and
-`release`. `version`, `platforms`, `runtime`, and `tags` are optional unless a record is published;
-then version, runtime, and release are required. There is no access questionnaire: declare only
-runtime/security facts the user needs before installing, not optional presentation extras.
+Required fields are `id`, `license`, `repo`, `readme`, `status`, and `release`. `name`, `summary`,
+and `author` are optional presentation metadata: `name` defaults to the ID, and an omitted summary
+or author is not shown. `version`, `platforms`, `runtime`, and `tags` are optional unless a record is
+published; then version, runtime, and release are required. There is no access questionnaire:
+declare only runtime/security facts the user needs before installing, not optional presentation
+extras.
 
 The complete schema, validation rules, archive contract, and signing plan are in
 [docs/registry.md](docs/registry.md). Contribution steps are in [CONTRIBUTING.md](CONTRIBUTING.md).

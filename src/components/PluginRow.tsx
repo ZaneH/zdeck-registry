@@ -14,7 +14,7 @@ export function PluginRow({ plugin }: { plugin: PluginRecord }) {
             <span className="plugin-name">{plugin.name}</span>
             {plugin.version ? <span className="plugin-version">{plugin.version}</span> : null}
           </span>
-          <span className="plugin-summary">{plugin.summary}</span>
+          {plugin.summary ? <span className="plugin-summary">{plugin.summary}</span> : null}
           <span className="plugin-meta">
             {plugin.tags?.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
             {plugin.runtime ? <span>{plugin.runtime.language} {plugin.runtime.minimum}+</span> : null}

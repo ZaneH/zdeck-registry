@@ -1,6 +1,6 @@
 import { ArrowLeft, ExternalLink, ShieldAlert } from "lucide-react";
 import { StatusBadge } from "../components/StatusBadge";
-import { SafeReadme } from "../lib/readme";
+import { readmeBaseUrl, SafeReadme } from "../lib/readme";
 import {
   canOfferInstall,
   installRequestUrl,
@@ -38,9 +38,9 @@ export function PluginPage({ plugin, readmes }: PluginPageProps) {
                 {plugin.version ? <span className="plugin-version">{plugin.version}</span> : null}
                 <StatusBadge plugin={plugin} />
               </div>
-              <p className="detail-summary">{plugin.summary}</p>
+              {plugin.summary ? <p className="detail-summary">{plugin.summary}</p> : null}
               <div className="detail-meta">
-                <span>{plugin.author}</span>
+                {plugin.author ? <span>{plugin.author}</span> : null}
                 <span>{plugin.license}</span>
                 {plugin.platforms?.map((platform) => <span key={platform}>{platform}</span>)}
               </div>
@@ -48,7 +48,7 @@ export function PluginPage({ plugin, readmes }: PluginPageProps) {
           </header>
 
           {markdown ? (
-            <SafeReadme markdown={markdown} />
+            <SafeReadme markdown={markdown} baseUrl={readmeBaseUrl(plugin.repo)} />
           ) : (
             <div className="inline-error" role="alert">
               <h2>README unavailable</h2>

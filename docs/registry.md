@@ -16,10 +16,10 @@ URLs, and missing READMEs reject the catalogue; entries are never silently skipp
 | Field | Required | Rule |
 | --- | --- | --- |
 | `id` | yes | Lowercase manifest ID: `^[a-z][a-z0-9-]{0,63}$`; must match the plugin manifest. |
-| `name` | yes | 1–80 characters, no control characters. |
-| `summary` | yes | 1–200 characters. Plain text, one sentence. |
+| `name` | no | Optional presentation; 1–80 characters, no control characters. Defaults to the ID. |
+| `summary` | no | Optional presentation; 1–200 characters. Plain text, one sentence. Omit to show no summary. |
 | `version` | for published | Three numeric parts, such as `0.1.0`; must match the plugin manifest. |
-| `author` | yes | 1–80 characters. |
+| `author` | no | Optional presentation; 1–80 characters. Omit when no publisher identity should be asserted. |
 | `license` | yes | SPDX-style identifier, 1–40 characters, matching the plugin's licence file. |
 | `repo` | yes | Absolute HTTPS source URL with no embedded credentials. |
 | `platforms` | no | 1–8 tested platform labels, such as `macOS` or `Linux`. Omit if untested. |
@@ -31,7 +31,8 @@ URLs, and missing READMEs reject the catalogue; entries are never silently skipp
 
 `platforms` and `runtime` are compatibility facts, not marketing fields. Do not declare a minimum
 that was not exercised, and do not add a generic access questionnaire. A README, source repository,
-and licence are the complete documentation request.
+and licence are the complete documentation request. Name, summary, and author are optional; an
+absent author means the registry does not assert who publishes the plugin.
 
 ## Preview and in-development entries
 
@@ -87,9 +88,11 @@ zdeck://plugins/install?id=spotify&version=0.1.0
 
 READMEs are imported with Vite `?raw` at build time from `registry/readmes/`. There is no runtime
 request to a README URL, no remote image proxy, and no raw HTML execution. The renderer allows
-headings, lists, tables, code blocks, task lists, relative links, and HTTP(S) links. It drops images
-and refuses `javascript:` links; raw HTML and iframes are escaped or ignored. Tests cover hostile
-input in `tests/readme.test.tsx`.
+headings, lists, tables, code blocks, task lists, and HTTP(S) links. Relative links resolve only
+when an explicit GitHub `/tree/<branch>/<path>` source URL gives a known README base; otherwise they
+are rendered non-clickable rather than linked to registry routes. It drops images and refuses
+`javascript:`, protocol-relative, and backslash URLs; raw HTML and iframes are escaped or ignored.
+Tests cover hostile input in `tests/readme.test.tsx`.
 
 ## Search and tags
 
