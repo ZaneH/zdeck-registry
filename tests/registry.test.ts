@@ -170,6 +170,13 @@ describe("install requests", () => {
     // The prototype still refuses to surface it as an enabled action.
     expect(canOfferInstall(plugin)).toBe(false);
   });
+
+  it("does not offer an install for an unsigned release", () => {
+    const result = parsePlugin(published());
+    if (!result.ok) throw new Error(result.error);
+    expect(result.registry.plugins[0].release?.signature).toBeUndefined();
+    expect(canOfferInstall(result.registry.plugins[0])).toBe(false);
+  });
 });
 
 describe("README bounds", () => {

@@ -147,7 +147,7 @@ export function installRequestUrl(plugin: PluginRecord): string | null {
 }
 
 export const canOfferInstall = (plugin: PluginRecord) =>
-  INSTALL_REQUESTS_ENABLED && installRequestUrl(plugin) !== null;
+  INSTALL_REQUESTS_ENABLED && !!plugin.release?.signature && installRequestUrl(plugin) !== null;
 
 export function statusLabel(plugin: PluginRecord): string {
   if (plugin.status === "published") return "Published";
