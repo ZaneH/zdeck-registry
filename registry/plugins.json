@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "plugins": [
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "summary": "Controls Spotify desktop on macOS through local Automation.",
+      "version": "0.1.0",
+      "author": "zDeck",
+      "license": "MIT",
+      "repo": "https://github.com/ZaneH/zdeck/tree/main/plugins/spotify",
+      "platforms": ["macOS"],
+      "runtime": { "language": "node", "minimum": "22.18.0" },
+      "tags": ["media", "macos"],
+      "readme": "spotify.md",
+      "status": "preview",
+      "release": null
+    },
+    {
+      "id": "home-assistant",
+      "name": "Home Assistant",
+      "summary": "Local Home Assistant controls. In development; not published.",
+      "author": "zDeck",
+      "license": "MIT",
+      "repo": "https://github.com/ZaneH/zdeck",
+      "tags": ["smart-home", "in-development"],
+      "readme": "home-assistant.md",
+      "status": "in-development",
+      "release": null
+    }
+  ]
+}
