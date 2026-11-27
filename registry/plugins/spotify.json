@@ -1,16 +1,16 @@
 {
   "id": "spotify",
-  "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/main/plugins/spotify" },
+  "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/c688567f8359f6d20ff4a7ee30ba6c18e25cc963/plugins/spotify" },
   "name": "Spotify",
-  "summary": "Controls Spotify desktop on macOS through local Automation.",
+  "summary": "Signed macOS pilot for local Spotify controls. Public serving and native install QA are pending; this release does not support Windows or Linux.",
   "version": "0.1.0",
   "author": "zDeck",
   "license": "MIT",
-  "repo": "https://github.com/ZaneH/zdeck/tree/main/plugins/spotify",
+  "repo": "https://github.com/ZaneH/zdeck",
   "platforms": ["macOS"],
   "runtime": { "language": "node", "minimum": "22.18.0" },
-  "tags": ["media", "macos"],
+  "tags": ["media", "macos", "pilot"],
   "readme": "spotify.md",
-  "status": "preview",
-  "release": null
+  "status": "published",
+  "release": { "record": "releases/spotify/0.1.0.json" }
 }

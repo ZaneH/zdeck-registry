@@ -44,10 +44,12 @@ absent author means the registry does not assert who publishes the plugin.
   requires matching signed release metadata and the independent app-ready gate before installation
   can be offered.
 
-Spotify is a `preview` of the existing reference plugin and has no release, so it is never offered
-for installation. Home Assistant 0.2.0 is a published signed macOS-only pilot whose public release
-and installed-handler QA were verified; with `ready:true` the site offers its exact install request.
-No other entry is activated.
+Home Assistant 0.2.0 is a published signed macOS-only pilot whose public release and
+installed-handler QA were verified; with `ready:true` the site offers its exact install request.
+Spotify 0.1.0 is now a published signed macOS-only pilot too: its envelope was locally verified and
+its public bytes are retained, but **public serving and installed-handler QA are still pending** the
+catalogue deployment. Its install request therefore becomes reachable with that deployment and must
+not be described as install-verified before those checks. No other entry is activated.
 
 ## Release record and install gate
 
@@ -75,8 +77,8 @@ releases have been published and verified on **every OS claimed by each release*
 single-platform pilot is allowed; unclaimed OSes are explicitly rejected by the desktop resolver.
 This does not waive implementation or future verification requirements for all three OSes. Only a published record with a
 build-verified envelope and that active contract can offer an install action. A valid signed
-published record with `ready:false` remains unavailable, and an entry without a release (such as
-the Spotify preview) can never be activated by that flag. The browser receives only a build-generated allowlist of exact verified identities,
+published record with `ready:false` remains unavailable, and an entry without a release can never
+be activated by that flag. The browser receives only a build-generated allowlist of exact verified identities,
 not private keys or Node crypto tooling.
 
 The link remains `zdeck://plugins/install?id=<encoded-id>&version=<encoded-exact-version>`.

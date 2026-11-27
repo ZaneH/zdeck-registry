@@ -53,7 +53,7 @@ try {
   await page.getByRole("heading", { name: "Plugins for zDeck." }).waitFor();
   await page.getByText("Spotify", { exact: true }).first().waitFor();
   await page.getByText("Home Assistant", { exact: true }).first().waitFor();
-  assert(await page.getByText("1 installable").isVisible(), "Only the macOS pilot should be installable.");
+  assert(await page.getByText("2 installable").isVisible(), "Exactly the two macOS pilots should be installable.");
 
   const search = page.getByLabel("Search plugins");
   await search.fill("printer");
@@ -68,13 +68,19 @@ try {
   await page.getByText("Desktop request").click();
   await page.getByText("zdeck://plugins/install?id=home-assistant&version=0.2.0", { exact: true }).waitFor();
   assert(await page.locator('a[href^="zdeck://"]').count() === 1, "Exactly one active install link may be rendered.");
+  assert(await page.locator('dl.facts dt:text-is("Platform") + dd').textContent() === "macOS", "HA must claim macOS only.");
   await page.screenshot({ path: "/tmp/zdeck-registry-ha-pilot.png", fullPage: true });
 
   await page.getByRole("link", { name: "All plugins" }).click();
   await page.getByRole("link", { name: /Spotify/ }).click();
-  await page.getByRole("heading", { name: "Spotify", exact: true }).waitFor();
-  assert(await page.getByRole("button", { name: "Install unavailable" }).isDisabled(), "Spotify install must be disabled.");
-  assert(await page.locator('a[href^="zdeck://"]').count() === 0, "No active zdeck:// link may be rendered.");
+  await page.getByRole("heading", { name: "Spotify", exact: true }).first().waitFor();
+  const spotifyInstall = page.getByRole("link", { name: "Install in zDeck" });
+  assert(await spotifyInstall.getAttribute("href") === "zdeck://plugins/install?id=spotify&version=0.1.0", "Spotify must offer only its exact identity.");
+  await page.getByText("Desktop request").click();
+  await page.getByText("zdeck://plugins/install?id=spotify&version=0.1.0", { exact: true }).waitFor();
+  assert(await page.locator('a[href^="zdeck://"]').count() === 1, "Exactly one active install link may be rendered.");
+  assert(await page.locator('dl.facts dt:text-is("Platform") + dd').textContent() === "macOS", "Spotify must claim macOS only.");
+  assert(await page.locator('dl.facts dd').filter({ hasText: /Windows|Linux/ }).count() === 0, "Spotify must not claim unverified platforms.");
   assert(await page.locator("img").count() === 0, "README images should not render.");
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -85,7 +91,7 @@ try {
   assert(externalRequests.length === 0, `Unexpected external requests: ${externalRequests.join(", ")}`);
 
   await page.screenshot({ path: "/tmp/zdeck-registry-smoke-narrow.png", fullPage: true });
-  console.log("smoke passed: directory, search, empty, detail, exact pilot install gate, disabled preview, safe README, narrow layout");
+  console.log("smoke passed: directory, search, empty, detail, exact two macOS pilot install gates, safe README, narrow layout");
   console.log("screenshot: /tmp/zdeck-registry-smoke-narrow.png");
 } finally {
   await browser?.close();

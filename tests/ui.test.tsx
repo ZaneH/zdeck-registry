@@ -117,14 +117,21 @@ describe("directory", () => {
 
 describe("detail", () => {
   it("shows an unavailable install for an unpublished preview", () => {
-    const spotify = plugins.find((plugin) => plugin.id === "spotify");
-    if (!spotify) throw new Error("spotify fixture missing");
-    const { container } = render(<PluginPage plugin={spotify} readmes={READMES} />);
+    const { container } = render(<PluginPage plugin={minimal} readmes={{ "spotify.md": "# Minimal" }} />);
     const button = screen.getByRole("button", { name: "Install unavailable" }) as HTMLButtonElement;
     expect(button.disabled).toBe(true);
     expect(container.querySelector('a[href^="zdeck://"]')).toBeNull();
     expect(screen.getByText(/no downloadable \.zdx archive/i)).toBeTruthy();
     expect(screen.getByText("No request is available for this entry.")).toBeTruthy();
+  });
+
+  it("keeps a published pilot unavailable without the build allowlist", () => {
+    const spotify = plugins.find((plugin) => plugin.id === "spotify");
+    if (!spotify) throw new Error("spotify fixture missing");
+    const { container } = render(<PluginPage plugin={spotify} readmes={READMES} />);
+    expect(screen.getByRole("button", { name: "Install unavailable" })).toBeTruthy();
+    expect(container.querySelector('a[href^="zdeck://"]')).toBeNull();
+    expect(screen.getByText(/not activated for the configured desktop release contract/i)).toBeTruthy();
   });
 
   it("renders a minimal record without summary or author", () => {

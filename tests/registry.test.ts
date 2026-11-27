@@ -22,7 +22,8 @@ function parsePlugin(plugin: Record<string, unknown>) {
 }
 
 function validPlugin(): Record<string, unknown> {
-  return structuredClone(seed().plugins[0]);
+  // Unpublished base so optional-field and rejection cases stay independent of the published seeds.
+  return { ...structuredClone(seed().plugins[0]), status: "preview", release: null };
 }
 
 function expectRejected(plugin: Record<string, unknown>) {
@@ -154,14 +155,14 @@ describe("registry validation", () => {
 });
 
 describe("install requests", () => {
-  it("keeps preview and staged macOS pilot actions unavailable until app activation", () => {
+  it("builds requests only for the two checked-in macOS pilots until a build allowlist activates them", () => {
     const result = parseRegistry(raw, READMES);
     if (!result.ok) throw new Error(result.error);
-    for (const plugin of result.registry.plugins) {
-      expect(installRequestUrl(plugin)).toBe(plugin.id === "home-assistant"
-        ? "zdeck://plugins/install?id=home-assistant&version=0.2.0" : null);
-      expect(canOfferInstall(plugin)).toBe(false);
-    }
+    expect(result.registry.plugins.map(installRequestUrl)).toEqual([
+      "zdeck://plugins/install?id=spotify&version=0.1.0",
+      "zdeck://plugins/install?id=home-assistant&version=0.2.0",
+    ]);
+    for (const plugin of result.registry.plugins) expect(canOfferInstall(plugin)).toBe(false);
   });
 
   it("builds a request only for a publishable record", () => {

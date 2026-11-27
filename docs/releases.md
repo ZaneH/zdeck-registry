@@ -2,15 +2,21 @@
 
 The public site `https://zreg.zaaane.com` is reachable. Home Assistant 0.2.0 has a genuine signed
 **macOS-only pilot** record and publicly hosted archive; exact-byte public serving and
-installed-handler macOS QA were verified, so `registry/app-contract.json` is **`ready:true`** for
-exactly that identity. The independent desktop ships the same endpoint and public trust roots
-`registry-2026-01` (historical) and `registry-2026-11` (prepared rotation). A Spotify 0.1.0
-candidate envelope has been signed with the new root and locally verified against this trust
-file, but it is not published, catalogued or activated; Spotify remains a preview. The
-operator-authorized signing CLI used the external private-key file locally; no key bytes were
-printed, copied, committed or deployed. Do not enable any further link before the applicable
-publication and native handoff checks.
-See the [HA pilot record and reproducible deployment procedure](home-assistant-candidate.md) and
+installed-handler macOS QA were verified. The independent desktop ships the same endpoint and
+public trust roots `registry-2026-01` (historical) and `registry-2026-11` (prepared rotation).
+`registry/app-contract.json` is **`ready:true`** for every exact build-verified published
+identity, which currently means the HA 0.2.0 pilot and the newly catalogued Spotify 0.1.0 pilot.
+
+Spotify 0.1.0 is signed with `registry-2026-11`, locally verified against this trust file and now
+has a published catalogue record and envelope, **but it is not deployed**: public serving and
+native installed-handler QA are pending. Because the gate is per identity, deploying the catalogue
+is what activates the Spotify install request; the reviewed bytes must be retained **and** the
+follow-up public/native checks completed at the same time. Until then, do not describe Spotify as
+publicly available or install-verified in any other material.
+The operator-authorized signing CLI used the external private-key file locally; no key bytes were
+printed, copied, committed or deployed.
+See the [HA pilot record](home-assistant-candidate.md), the
+[Spotify pilot record and rollout](spotify-candidate.md) and
 [per-plugin generated submissions](submissions.md).
 
 ## Immutable contract (matches zDeck `docs/registry-releases.md`)
@@ -84,7 +90,8 @@ allows a genuinely signed published record to be listed while app activation is 
 
 Rotation: distribute a new app trusting old+new public IDs first, then sign new exact versions with
 the new key. This trust file now carries both IDs, with `registry-2026-01` retained for historical
-records; no new record is published under `registry-2026-11` yet. Remove an ID in a future desktop
+records; the Spotify 0.1.0 record is the first published under `registry-2026-11`, while HA 0.2.0
+remains signed by the historical root. Remove an ID in a future desktop
 build to manually revoke it. Older/offline apps and
 already installed packages are not remotely revoked. No expiry/online revocation/PKI/transparency
 log is supplied. Never rewrite existing release bytes to re-sign them; publish a new version.
@@ -187,9 +194,10 @@ The website has no lookup/download busy/cancel state: it only hands an untrusted
 those states live in the desktop Storybook. No page can detect a handler/install result reliably.
 Website Storybook includes explicit fictional AppReady/PublishedUnready/Preview handoffs, enabled
 only by a Storybook-only exact-identity allowlist. Never click those fixture OS links; they are
-rendering checks, not install evidence. The public app contract is active for the verified macOS
-pilot only; current evidence and remaining gaps are recorded in
-[home-assistant-candidate.md](home-assistant-candidate.md).
+rendering checks, not install evidence. The public app contract is active for each verified macOS
+pilot identity; current evidence and remaining gaps are recorded in
+[home-assistant-candidate.md](home-assistant-candidate.md) and
+[spotify-candidate.md](spotify-candidate.md).
 
 ### Historical checks executed for the initial tooling milestone
 

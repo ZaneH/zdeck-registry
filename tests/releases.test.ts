@@ -26,12 +26,16 @@ function fixture(hosted = false) {
 describe("signed release tooling", () => {
   it("validates the entire checked-in catalogue, trust contract and historical release directory", () => {
     const checked = buildReleases(process.cwd());
-    // Only the exact published macOS pilot identity is activated; Spotify has no release.
-    expect(checked.ready).toEqual(["home-assistant@0.2.0"]);
+    // Both checked-in macOS pilots are published; each exact identity is gated by its own record.
+    expect(checked.ready).toEqual(["home-assistant@0.2.0", "spotify@0.1.0"]);
     const config = trust(JSON.parse(readFileSync("registry/app-contract.json", "utf8")));
     const { release } = verifyEnvelope(compactJson(Buffer.from(checked.records.get("releases/home-assistant/0.2.0.json")!)), config);
     expect(release.compatibility.platforms).toEqual(["macos"]);
     expect(release.artifact.sha256).toBe("2bc4fde8f462feabbf91b929a9b5213eee63183972f34435b53485de225e979d");
+    const spotifyRelease = verifyEnvelope(compactJson(Buffer.from(checked.records.get("releases/spotify/0.1.0.json")!)), config).release;
+    expect(spotifyRelease.compatibility.platforms).toEqual(["macos"]);
+    expect(spotifyRelease.artifact.sha256).toBe("4483286cdfe8fed0620879b7cca4821cd63932b8579181e79fff067b66980d8a");
+    expect(spotifyRelease.source.commit).toBe("c688567f8359f6d20ff4a7ee30ba6c18e25cc963");
   });
   it("rejects legacy catalogues, filename mismatches, malformed files and symlinked records", () => {
     const f = fixture(); try {

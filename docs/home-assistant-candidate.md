@@ -12,7 +12,9 @@ only after operator-verified public serving and installed-build QA:
 - An earlier automated lookup anomaly was not reproduced across 12 s of passive screenshots and
   read-only accessibility inspection; its cause is still unexplained and it is not called disproven.
 - Signed platforms stay `["macos"]`. Windows/Linux were not natively verified and this release does
-  not support them. Spotify remains an unavailable preview.
+  not support them. Spotify 0.1.0 is now separately catalogued as a signed macOS pilot whose
+  deployment, public serving and native checks are pending; see
+  [spotify-candidate.md](spotify-candidate.md).
 
 The historical sections below record the earlier deployment-blocked state: the then-current 404
 snapshots and the retention/deploy procedure. Their dated observations are superseded by the
@@ -152,7 +154,8 @@ host during its separate read-only probe; it was not silently treated as reachab
 - Registry: **73 Vitest + 9 Python tests**, typecheck, production build, Storybook build, Brave
   production and directory smokes passed (1280/390/320px, keyboard/search/sort, no external requests).
   The production smoke now asserts exactly one active `zdeck://` link, for
-  `home-assistant@0.2.0`, and that the Spotify preview and every other entry stay disabled.
+  `home-assistant@0.2.0`, and that every other entry stays disabled. That smoke was later updated
+  for the Spotify 0.1.0 pilot; see [spotify-candidate.md](spotify-candidate.md).
   Screenshot: `/tmp/zdeck-registry-smoke-narrow.png`.
 - App: **358 unit tests**, typecheck, production frontend build, native library **50 tests**, plugin
   host **87 tests** (3 opt-in checks ignored normally), plus the explicit production-key candidate

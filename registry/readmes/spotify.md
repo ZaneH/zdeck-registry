@@ -1,6 +1,10 @@
-# Spotify local plugin folder
+# Spotify
 
 This MIT-licensed reference plugin controls Spotify desktop on macOS through local Automation. It does not use the Spotify Web API, credentials or OAuth. An installed Node.js **22.18.0 or newer** is required; Node itself is not bundled.
+
+## Signed macOS pilot 0.1.0
+
+The 0.1.0 `.zdx` archive is prebuilt and signed (`registry-2026-11`), and its signature, archive digest and source commit were verified locally. Its signed platforms are **macOS only**; Windows and Linux are rejected by the desktop before any download. Public serving of the record and archive, and native installed-handler installation, are **pending** until this release is deployed and separately checked. No desktop install of this packaged archive has been tested yet, and no playback or Automation session has been verified. The local folder workflow below is independent of that pending check.
 
 ## Develop from this repository
 

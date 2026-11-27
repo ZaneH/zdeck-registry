@@ -51,8 +51,8 @@ try {
   await choose(page, "Order", "Lowest first");
   const directoryUrl = page.url();
   await page.getByRole("link", { name: /Spotify/ }).click();
-  await page.getByRole("heading", { name: "Spotify", exact: true }).waitFor();
-  assert(await page.getByRole("button", { name: "Install unavailable" }).isDisabled(), "Preview install must remain disabled");
+  await page.getByRole("heading", { name: "Spotify", exact: true }).first().waitFor();
+  assert(await page.getByRole("link", { name: "Install in zDeck" }).getAttribute("href") === "zdeck://plugins/install?id=spotify&version=0.1.0", "Spotify must offer only its exact identity");
   await page.getByRole("link", { name: "All plugins" }).click();
   assert(page.url() === directoryUrl, "Detail back link lost criteria");
   assert(await search.inputValue() === "spotify", "Back link lost search");
