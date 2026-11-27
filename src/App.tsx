@@ -39,7 +39,7 @@ export function RegistryErrorPage({ error }: { error: string }) {
       <p>{error}</p>
       <p>
         The catalogue is validated as a whole before it is used. Run <code>npm test</code> and
-        check <code>registry/plugins.json</code> and its README files.
+        check <code>registry/plugins/</code> and its README files.
       </p>
       <a className="button" href="#/">Try again</a>
     </main>

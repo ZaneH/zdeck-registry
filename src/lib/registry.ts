@@ -169,6 +169,15 @@ export function parseRegistry(value: unknown, availableReadmes: ReadonlySet<stri
   return { ok: true, registry: { schemaVersion: 1, plugins } };
 }
 
+/** One reviewed record per file; filename identity and the whole catalogue fail closed. */
+export function parsePluginFiles(files: Record<string, unknown>, readmes: ReadonlySet<string>): ParseResult {
+  for (const [filename, record] of Object.entries(files)) {
+    if (!/^[a-z][a-z0-9-]{0,63}\.json$/.test(filename) || !isRecord(record)
+      || filename !== `${record.id}.json`) return { ok: false, error: "Plugin filename must match its manifest ID." };
+  }
+  return parseRegistry({ schemaVersion: 1, plugins: Object.values(files) }, readmes);
+}
+
 /**
  * The install deep link is a request for the desktop app to show a confirmation flow.
  * It does not install anything by itself, and this site disables it until signed releases exist.

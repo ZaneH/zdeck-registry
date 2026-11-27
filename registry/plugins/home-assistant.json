@@ -1,0 +1,13 @@
+{
+  "id": "home-assistant",
+  "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/main/plugins/home-assistant" },
+  "name": "Home Assistant",
+  "summary": "Local Home Assistant controls. In development; not published.",
+  "author": "zDeck",
+  "license": "MIT",
+  "repo": "https://github.com/ZaneH/zdeck",
+  "tags": ["smart-home", "in-development"],
+  "readme": "home-assistant.md",
+  "status": "in-development",
+  "release": null
+}

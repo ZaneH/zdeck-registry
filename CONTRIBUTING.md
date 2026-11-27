@@ -16,7 +16,7 @@ plugin's existing README; do not fill in a second description or an access quest
 ## 2. Add the entry
 
 1. Copy the plugin's README to `registry/readmes/<id>.md` (or add a new file; keep the same words).
-2. Add one record to `registry/plugins.json`. See [the schema](docs/registry.md) for every field.
+2. Add `registry/plugins/<id>.json` containing one record (no shared list). See [the schema](docs/registry.md) for every field.
 3. Keep `"release": null` and use `"status": "preview"` or `"in-development"` until a real archive
    exists.
 4. For a release, follow [maintainer signing/publication](docs/releases.md). Set `"status": "published"`

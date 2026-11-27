@@ -63,7 +63,7 @@ safe README behavior, no external requests, and a narrow viewport. It saves a sc
 
 1. Add the plugin's own `README.md` under `registry/readmes/` (reuse the repository README; do not
    write a second one).
-2. Add one record to `registry/plugins.json` with the manifest identity and version, source repo,
+2. Add `registry/plugins/<id>.json` (one record, no shared list) with the manifest identity and version, source repo,
    licence, licence file, and the runtime/platform details needed to install honestly.
 3. Build a prebuilt, self-contained `.zdx` archive and record its HTTPS URL and SHA-256. `.zdx` is
    an ordinary ZIP; it must contain no install scripts and must run without installing dependencies.

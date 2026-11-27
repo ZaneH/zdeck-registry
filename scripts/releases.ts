@@ -3,7 +3,7 @@ import { createHash, createPrivateKey, createPublicKey, sign, verify } from "nod
 import { readFileSync, readdirSync, mkdirSync, writeFileSync, lstatSync, existsSync, linkSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { parseRegistry } from "../src/lib/registry.ts";
+import { parsePluginFiles } from "../src/lib/registry.ts";
 
 export const DOMAIN = Buffer.from("zdeck-release-v1\0");
 const ID = /^[a-z][a-z0-9-]{0,63}$/;
@@ -79,10 +79,15 @@ function boundedFile(path: string, max: number): Buffer {
   const bytes = readFileSync(path); requireThat(bytes.length <= max); return bytes;
 }
 export function buildReleases(root: string): { records: Map<string, string>; ready: string[] } {
-  for (const path of ["registry", "registry/readmes", "registry/releases"]) requireThat(lstatSync(join(root, path)).isDirectory());
+  for (const path of ["registry", "registry/plugins", "registry/readmes", "registry/releases"]) requireThat(lstatSync(join(root, path)).isDirectory() && !lstatSync(join(root, path)).isSymbolicLink());
   const config = trust(JSON.parse(boundedFile(join(root, "registry/app-contract.json"), 4096).toString("utf8")));
   const readmes = new Set(readdirSync(join(root, "registry/readmes")));
-  const catalogue = parseRegistry(JSON.parse(boundedFile(join(root, "registry/plugins.json"), 2 * 1024 * 1024).toString("utf8")), readmes);
+  requireThat(!existsSync(join(root, "registry/plugins.json")));
+  const filenames = readdirSync(join(root, "registry/plugins")).sort();
+  requireThat(filenames.length <= 500);
+  const catalogue = parsePluginFiles(Object.fromEntries(filenames.map(name => [name,
+    JSON.parse(boundedFile(join(root, "registry/plugins", name), 16384).toString("utf8")),
+  ])), readmes);
   requireThat(catalogue.ok); const records = new Map<string, string>(); const releases = new Map<string, Payload>();
   for (const id of readdirSync(join(root, "registry/releases"))) {
     if (id === ".gitkeep") continue;

@@ -2,14 +2,12 @@
 
 ## Catalogue
 
-`registry/plugins.json` is version 1:
-
-```json
-{ "schemaVersion": 1, "plugins": [] }
-```
-
-The whole file is validated before use. Unknown keys, duplicate IDs, malformed values, unsafe
-URLs, and missing READMEs reject the catalogue; entries are never silently skipped.
+Each `registry/plugins/<id>.json` contains one record below. There is no aggregate JSON source
+or handwritten import list. The browser and release tooling assemble a version-1 catalogue at
+build time. Filenames must match IDs; non-record files, symlinks, unknown keys, duplicate IDs,
+malformed values, unsafe URLs and missing READMEs fail the whole build, never a partial catalogue.
+The old `registry/plugins.json` is rejected if present. Existing optional metadata and directory
+search/filter/sort semantics are unchanged.
 
 ## Record fields
 

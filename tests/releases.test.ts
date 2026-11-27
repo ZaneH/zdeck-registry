@@ -6,7 +6,8 @@ import { dirname, join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { buildReleases, checkArchive, compactJson, payload, retainReleases, signPayload, trust, verifyEnvelope, type Payload } from "../scripts/releases";
 import interop from "./fixtures/ed25519-public-fixture.json";
-import raw from "../registry/plugins.json";
+import spotify from "../registry/plugins/spotify.json";
+const raw = { plugins: [spotify] };
 
 function fixture(hosted = false) {
   const root = mkdtempSync(join(tmpdir(), "zdeck-release-fixture-"));
@@ -19,12 +20,28 @@ function fixture(hosted = false) {
   const envelope = signPayload(Buffer.from(JSON.stringify(p)), keyFile, "fixture-only");
   const put = (path: string, value: unknown) => { const full = join(root, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, typeof value === "string" ? value : JSON.stringify(value) + "\n"); };
   put("registry/app-contract.json", config); put("registry/releases/spotify/0.1.0.json", envelope); put("registry/readmes/spotify.md", "# Fixture only");
-  put("registry/plugins.json", { schemaVersion: 1, plugins: [{ ...raw.plugins[0], status: "published", release: { record: "releases/spotify/0.1.0.json" } }] });
+  put("registry/plugins/spotify.json", { ...raw.plugins[0], status: "published", release: { record: "releases/spotify/0.1.0.json" } });
   return { root, keyFile, config, archive, p, envelope, put, cleanup: () => rmSync(root, { recursive: true, force: true }) };
 }
 describe("signed release tooling", () => {
   it("validates the entire checked-in catalogue, trust contract and historical release directory", () => {
     expect(() => buildReleases(process.cwd())).not.toThrow();
+  });
+  it("rejects legacy catalogues, filename mismatches, malformed files and symlinked records", () => {
+    const f = fixture(); try {
+      f.put("registry/plugins.json", { schemaVersion: 1, plugins: [] });
+      expect(() => buildReleases(f.root)).toThrow();
+      rmSync(join(f.root, "registry/plugins.json"));
+      f.put("registry/plugins/other.json", raw.plugins[0]);
+      expect(() => buildReleases(f.root)).toThrow();
+      rmSync(join(f.root, "registry/plugins/other.json"));
+      f.put("registry/plugins/broken.json", "{");
+      expect(() => buildReleases(f.root)).toThrow();
+      rmSync(join(f.root, "registry/plugins/broken.json"));
+      rmSync(join(f.root, "registry/plugins/spotify.json"));
+      symlinkSync(join(process.cwd(), "registry/plugins/spotify.json"), join(f.root, "registry/plugins/spotify.json"));
+      expect(() => buildReleases(f.root)).toThrow();
+    } finally { f.cleanup(); }
   });
   it("verifies the shared public-only Node/Rust interop fixture", () => {
     const verified = verifyEnvelope(interop.envelope, trust(interop.trust));
@@ -54,7 +71,7 @@ describe("signed release tooling", () => {
       expect(readFileSync(join(out, "releases/spotify/0.1.0.json"))).toEqual(Buffer.from(JSON.stringify(f.envelope) + "\n"));
       expect(readFileSync(join(out, "artifacts/spotify/0.1.0.zdx"))).toEqual(f.archive);
       // A later catalogue may remove an entry, but verified Git-tracked history is retained.
-      f.put("registry/plugins.json", { schemaVersion: 1, plugins: [] });
+      rmSync(join(f.root, "registry/plugins/spotify.json"));
       retainReleases(f.root, out, join(out, "artifacts"));
       writeFileSync(join(out, "releases/spotify/0.1.0.json"), "changed");
       expect(() => retainReleases(f.root, out, archives)).toThrow();
@@ -100,7 +117,7 @@ describe("signed release tooling", () => {
   it("rejects mismatched catalogue facts, missing records and decorative signatures", () => {
     const f = fixture(); try {
       for (const mismatch of [{ version: "9.9.9" }, { repo: "https://other.example.test/" }, { license: "Other" }, { runtime: { language: "python", minimum: "3.10.0" } }, { platforms: ["Linux"] }, { release: { signature: { keyId: "fake", value: "A".repeat(64) } } }]) {
-        f.put("registry/plugins.json", { schemaVersion: 1, plugins: [{ ...raw.plugins[0], status: "published", release: { record: "releases/spotify/0.1.0.json" }, ...mismatch }] });
+        f.put("registry/plugins/spotify.json", { ...raw.plugins[0], status: "published", release: { record: "releases/spotify/0.1.0.json" }, ...mismatch });
         expect(() => buildReleases(f.root)).toThrow();
       }
     } finally { f.cleanup(); }

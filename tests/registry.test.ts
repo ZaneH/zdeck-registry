@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
-import raw from "../registry/plugins.json";
+import spotify from "../registry/plugins/spotify.json";
+import homeAssistant from "../registry/plugins/home-assistant.json";
+const raw = { schemaVersion: 1, plugins: [spotify, homeAssistant] };
 import { DEFAULT_DIRECTORY, selectPlugins } from "../src/lib/directory";
 import {
   canOfferInstall,
   installRequestUrl,
   parseRegistry,
+  parsePluginFiles,
   readmeFor,
   README_LIMIT,
   tagsOf,
@@ -40,6 +43,15 @@ describe("registry validation", () => {
     if (result.ok) {
       expect(result.registry.plugins.map((plugin) => plugin.id)).toEqual(["spotify", "home-assistant"]);
     }
+  });
+
+  it("validates per-plugin filenames and rejects the entire input on any malformed entry", () => {
+    expect(parsePluginFiles({ "spotify.json": spotify }, READMES).ok).toBe(true);
+    for (const filename of ["../spotify.json", "other.json", "spotify.JSON", "README.md"]) {
+      expect(parsePluginFiles({ [filename]: spotify }, READMES).ok).toBe(false);
+    }
+    expect(parsePluginFiles({ "spotify.json": spotify, "broken.json": null }, READMES).ok).toBe(false);
+    expect(parseRegistry({ schemaVersion: 1, plugins: [spotify, spotify] }, READMES).ok).toBe(false);
   });
 
   it("normalizes missing presentation fields without asserting identity", () => {
