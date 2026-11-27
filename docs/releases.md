@@ -10,7 +10,8 @@ or invent a review, checksum or signature to demonstrate installation.
 Lookup is `<configured-base>releases/<id>/<exact-version>.json`, never a browser-supplied URL.
 IDs are `[a-z][a-z0-9-]{0,63}`; exact versions have three 1–4-digit numeric parts.
 Envelope is `{schema:1,keyId,payload,signature}`, UTF-8 JSON ≤32 KiB, no unknown fields. Payload
-and signature are standard padded base64; signature is 64-byte Ed25519. Signed message bytes:
+and signature are standard padded base64; signature is 64-byte Ed25519. Malformed UTF-8 and
+unpaired JSON surrogates are rejected rather than replaced while decoding. Signed message bytes:
 ASCII `zdeck-release-v1`, NUL, then the **decoded payload bytes unchanged**. Do not reserialize JSON
 before verifying. This is not ambiguous JSON canonicalization and there is no selectable algorithm.
 

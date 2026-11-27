@@ -48,9 +48,9 @@ describe("signed release tooling", () => {
   it("refuses fake signatures, unknown keys, unknown fields and unsupported contracts", () => {
     const f = fixture(); try {
       for (const bad of [{ ...f.envelope, signature: Buffer.alloc(64).toString("base64") }, { ...f.envelope, payload: Buffer.from("{}").toString("base64") }, { ...f.envelope, keyId: "unknown" }, { ...f.envelope, schema: 2 }, { ...f.envelope, algorithm: "none" }]) expect(() => verifyEnvelope(bad, f.config)).toThrow();
-      for (const bad of [ { ...f.p, schema: 2 }, { ...f.p, unknown: true }, { ...f.p, artifact: { ...f.p.artifact, bytes: 0 } }, { ...f.p, compatibility: { ...f.p.compatibility, minimum: "99.0.0" } }, { ...f.p, source: { ...f.p.source, commit: "dev" } } ]) expect(() => payload(bad)).toThrow();
+      for (const bad of [ { ...f.p, schema: 2 }, { ...f.p, unknown: true }, { ...f.p, artifact: { ...f.p.artifact, bytes: 0 } }, { ...f.p, compatibility: { ...f.p.compatibility, minimum: "99.0.0" } }, { ...f.p, source: { ...f.p.source, commit: "dev" } }, { ...f.p, source: { ...f.p.source, license: "\uD800" } } ]) expect(() => payload(bad)).toThrow();
       for (const url of ["http://example.test/a.zdx", "https://user:secret@example.test/a.zdx", "https://example.test/a.zdx#", "https://127.0.0.1/a.zdx", "https://evil.local/a.zdx", "https://example.test/a.zdx?query=1"]) expect(() => payload({ ...f.p, artifact: { ...f.p.artifact, url } })).toThrow();
-      for (const bytes of [Buffer.from('{"id":"a","id":"b"}'), Buffer.from(" ".repeat(32769))]) expect(() => compactJson(bytes)).toThrow();
+      for (const bytes of [Buffer.from('{"id":"a","id":"b"}'), Buffer.from(" ".repeat(32769)), Buffer.concat([Buffer.from('{"license":"'), Buffer.from([0xff]), Buffer.from('"}')])]) expect(() => compactJson(bytes)).toThrow();
       expect(() => trust({ ...f.config, ready: true, keys: [] })).toThrow();
       expect(() => trust({ ...f.config, ready: true, endpoint: null })).toThrow();
       expect(() => trust({ ...f.config, keys: [...f.config.keys, ...f.config.keys] })).toThrow();

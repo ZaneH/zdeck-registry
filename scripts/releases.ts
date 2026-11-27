@@ -14,7 +14,7 @@ function requireThat(ok: unknown): asserts ok { if (!ok) throw new Error("Invali
 function object(value: unknown, keys: string[]): asserts value is Record<string, unknown> {
   requireThat(!!value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === keys.length && keys.every(k => Object.hasOwn(value, k)));
 }
-function text(value: unknown, max: number): asserts value is string { requireThat(typeof value === "string" && value.length > 0 && value.length <= max && !/[\p{Cc}]/u.test(value)); }
+function text(value: unknown, max: number): asserts value is string { requireThat(typeof value === "string" && value.length > 0 && value.length <= max && !/[\p{Cc}\p{Cs}]/u.test(value)); }
 export function https(value: unknown): string {
   text(value, 2048); requireThat(/^[\x21-\x7e]+$/.test(value) && !/[\\@]/.test(value));
   const u = new URL(value);
@@ -56,7 +56,7 @@ export function trust(value: unknown): Trust {
   return value as unknown as Trust;
 }
 // Compact tooling JSON also rejects duplicate keys. Signature verification itself uses raw payload bytes.
-export function compactJson(bytes: Buffer): unknown { requireThat(bytes.length <= 32768); const s = bytes.toString("utf8"); const v: unknown = JSON.parse(s); requireThat(JSON.stringify(v) === s.replace(/\n$/, "")); return v; }
+export function compactJson(bytes: Buffer): unknown { requireThat(bytes.length <= 32768); const s = bytes.toString("utf8"); requireThat(Buffer.from(s, "utf8").equals(bytes)); const v: unknown = JSON.parse(s); requireThat(JSON.stringify(v) === s.replace(/\n$/, "")); return v; }
 export function verifyEnvelope(value: unknown, config: Trust): { envelope: Envelope; release: Payload } {
   object(value, ["schema", "keyId", "payload", "signature"]); requireThat(value.schema === 1 && typeof value.keyId === "string");
   const key = config.keys.find(k => k.id === value.keyId); requireThat(key);
