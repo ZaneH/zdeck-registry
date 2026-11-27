@@ -53,7 +53,7 @@ try {
   await page.getByRole("heading", { name: "Plugins for zDeck." }).waitFor();
   await page.getByText("Spotify", { exact: true }).first().waitFor();
   await page.getByText("Home Assistant", { exact: true }).first().waitFor();
-  assert(await page.getByText("0 installable").isVisible(), "Directory should state that nothing is installable.");
+  assert(await page.getByText("1 installable").isVisible(), "Only the macOS pilot should be installable.");
 
   const search = page.getByLabel("Search plugins");
   await search.fill("printer");
@@ -63,11 +63,11 @@ try {
 
   await page.getByRole("link", { name: /Home Assistant/ }).click();
   await page.getByRole("heading", { name: "Home Assistant", exact: true }).waitFor();
-  const homeInstall = page.getByRole("button", { name: "Install unavailable" });
-  assert(await homeInstall.isDisabled(), "Unavailable install must be disabled.");
+  const homeInstall = page.getByRole("link", { name: "Install in zDeck" });
+  assert(await homeInstall.getAttribute("href") === "zdeck://plugins/install?id=home-assistant&version=0.2.0", "Pilot must offer only its exact identity.");
   await page.getByText("Desktop request").click();
   await page.getByText("zdeck://plugins/install?id=home-assistant&version=0.2.0", { exact: true }).waitFor();
-  assert(await page.locator('a[href^="zdeck://"]').count() === 0, "Staged pilot must not expose an active install link.");
+  assert(await page.locator('a[href^="zdeck://"]').count() === 1, "Exactly one active install link may be rendered.");
   await page.screenshot({ path: "/tmp/zdeck-registry-ha-pilot.png", fullPage: true });
 
   await page.getByRole("link", { name: "All plugins" }).click();
@@ -85,7 +85,7 @@ try {
   assert(externalRequests.length === 0, `Unexpected external requests: ${externalRequests.join(", ")}`);
 
   await page.screenshot({ path: "/tmp/zdeck-registry-smoke-narrow.png", fullPage: true });
-  console.log("smoke passed: directory, search, empty, detail, disabled install, safe README, narrow layout");
+  console.log("smoke passed: directory, search, empty, detail, exact pilot install gate, disabled preview, safe README, narrow layout");
   console.log("screenshot: /tmp/zdeck-registry-smoke-narrow.png");
 } finally {
   await browser?.close();

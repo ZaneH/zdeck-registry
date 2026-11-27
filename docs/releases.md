@@ -1,13 +1,14 @@
 # Maintainer signed releases v1
 
-The public site `https://zreg.zaaane.com` is reachable. Home Assistant 0.2.0 now has a genuine
-signed **macOS-only pilot** record and locally retained archive, but the public paths still return
-404 pending CT deployment. `registry/app-contract.json` keeps **`ready:false`**. The independent
-desktop ships the same endpoint/public trust root `registry-2026-01`. Spotify remains a preview.
-The operator-authorized signing CLI used the external private-key file locally; no key bytes were
-printed, copied, committed or deployed. Do not enable links before the applicable publication and
-native handoff checks.
-See the [first real HA candidate and exact next commands](home-assistant-candidate.md) and
+The public site `https://zreg.zaaane.com` is reachable. Home Assistant 0.2.0 has a genuine signed
+**macOS-only pilot** record and publicly hosted archive; exact-byte public serving and
+installed-handler macOS QA were verified, so `registry/app-contract.json` is **`ready:true`** for
+exactly that identity. The independent desktop ships the same endpoint/public trust root
+`registry-2026-01`. Spotify remains a preview with no release and is never activated. The
+operator-authorized signing CLI used the external private-key file locally; no key bytes were
+printed, copied, committed or deployed. Do not enable any further link before the applicable
+publication and native handoff checks.
+See the [HA pilot record and reproducible deployment procedure](home-assistant-candidate.md) and
 [per-plugin generated submissions](submissions.md).
 
 ## Immutable contract (matches zDeck `docs/registry-releases.md`)
@@ -182,8 +183,9 @@ The website has no lookup/download busy/cancel state: it only hands an untrusted
 those states live in the desktop Storybook. No page can detect a handler/install result reliably.
 Website Storybook includes explicit fictional AppReady/PublishedUnready/Preview handoffs, enabled
 only by a Storybook-only exact-identity allowlist. Never click those fixture OS links; they are
-rendering checks, not install evidence. The public app contract is configured but still not ready; current signed pilot evidence is
-recorded in [home-assistant-candidate.md](home-assistant-candidate.md).
+rendering checks, not install evidence. The public app contract is active for the verified macOS
+pilot only; current evidence and remaining gaps are recorded in
+[home-assistant-candidate.md](home-assistant-candidate.md).
 
 ### Historical checks executed for the initial tooling milestone
 

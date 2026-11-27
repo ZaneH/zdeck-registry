@@ -44,8 +44,10 @@ absent author means the registry does not assert who publishes the plugin.
   requires matching signed release metadata and the independent app-ready gate before installation
   can be offered.
 
-Spotify is a `preview` of the existing reference plugin. Home Assistant 0.2.0 is a signed
-macOS-only pilot staged for publication. Neither is offered for installation while `ready:false`.
+Spotify is a `preview` of the existing reference plugin and has no release, so it is never offered
+for installation. Home Assistant 0.2.0 is a published signed macOS-only pilot whose public release
+and installed-handler QA were verified; with `ready:true` the site offers its exact install request.
+No other entry is activated.
 
 ## Release record and install gate
 
@@ -66,15 +68,15 @@ See [releases.md](releases.md) for Ed25519 domain-separated exact bytes, strict 
 external-key tooling, immutable static output and hosting, independent desktop trust distribution,
 rotation/revocation and concrete isolated smoke. Nothing generates a production signing key.
 
-`app-contract.json` is checked in **not ready**, with the owned public endpoint and reviewed
-public key; new desktop builds ship the independent matching trust root. `ready:true` is an
+`app-contract.json` is checked in **ready for the macOS pilot**, with the owned public endpoint and
+reviewed public key; new desktop builds ship the independent matching trust root. `ready:true` is an
 explicit maintainer assertion that a matching configured desktop build and genuine immutable
 releases have been published and verified on **every OS claimed by each release**. A verified
 single-platform pilot is allowed; unclaimed OSes are explicitly rejected by the desktop resolver.
 This does not waive implementation or future verification requirements for all three OSes. Only a published record with a
 build-verified envelope and that active contract can offer an install action. A valid signed
-published record with `ready:false` remains unavailable; preview entries can never be activated
-by that flag. The browser receives only a build-generated allowlist of exact verified identities,
+published record with `ready:false` remains unavailable, and an entry without a release (such as
+the Spotify preview) can never be activated by that flag. The browser receives only a build-generated allowlist of exact verified identities,
 not private keys or Node crypto tooling.
 
 The link remains `zdeck://plugins/install?id=<encoded-id>&version=<encoded-exact-version>`.

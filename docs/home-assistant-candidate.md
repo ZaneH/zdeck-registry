@@ -1,11 +1,22 @@
-# Home Assistant 0.2.0 — signed macOS pilot, deployment blocked
+# Home Assistant 0.2.0 — active signed macOS pilot
 
-Updated **2026-11-27 04:37 UTC**. A genuine signed release now exists locally. **It is not yet
-hosted:** public JSON/ZIP paths still return direct 404s and the live page still shows the old
-in-development entry. Website `ready:false` deliberately keeps install actions unavailable.
-The remaining deployment blocker is the operator's **actual CT login address and registry checkout
-path**; neither is in project deployment configuration. No abandoned Dokku target, guessed CT,
-SSH config, Cloudflare/DNS change or remote infrastructure creation was used.
+Updated **2026-11-27**. The gate is now active: `registry/app-contract.json` has `ready:true`, so the
+website offers the untrusted install request for exactly `home-assistant@0.2.0`. This was enabled
+only after operator-verified public serving and installed-build QA:
+
+- The public record and archive at the final URLs below serve the signed bytes.
+- Installed macOS build `b9628ca` handled the `zdeck` deep link with the app closed, running and
+  hidden: explicit lookup, download and review, a fresh disabled/untrusted HA 0.2.0 install, and
+  persistence across a normal restart. No plugin was executed.
+- The existing HA 0.1.0 backup remains preserved and reversible.
+- An earlier automated lookup anomaly was not reproduced across 12 s of passive screenshots and
+  read-only accessibility inspection; its cause is still unexplained and it is not called disproven.
+- Signed platforms stay `["macos"]`. Windows/Linux were not natively verified and this release does
+  not support them. Spotify remains an unavailable preview.
+
+The historical sections below record the earlier deployment-blocked state: the then-current 404
+snapshots and the retention/deploy procedure. Their dated observations are superseded by the
+verified public deployment above; they are procedure and history, not current status.
 
 ## Exact immutable release
 
@@ -85,8 +96,9 @@ transfer those bytes to the CT's bind directories.
   a trailing slash, while the guard accepted only `/`. The fix normalizes **only that exact local
   root**; remote origins, credentials, ports, paths and queries remain rejected and tested.
 - The same isolated bundle received the fixed native delivery hook's HA identity, used the real
-  compiled production endpoint/key, and failed closed on the current **public 404**, then canceled
-  with nothing installed. No URL handler/default application was registered or replaced.
+  compiled production endpoint/key, and failed closed on the then-current **public 404** before
+  deployment, then canceled with nothing installed. No URL handler/default application was
+  registered or replaced.
 - **Actual production signature + native installer:** the opt-in Rust test used this exact envelope
   and archive, independently shipped public key and source/hash assertions. It passed signature →
   injected local HTTP bytes → real ZIP review → isolated disabled/untrusted install → restart with
@@ -102,9 +114,12 @@ installation pilot, not other macOS versions/architectures, real device operatio
 parity. Windows/Linux implementations remain required and their native verification remains open.
 The website gate is per offered release's **claimed platforms**, not a blanket three-OS prerequisite.
 It still requires positive public hosting, distributed configured build and installed-handler QA
-on every claimed platform; those macOS handoff checks are not yet complete.
+on every claimed platform; those macOS checks are now complete for this pilot.
 
 ## Live state, distinct from local state
+
+**Superseded:** this section is the pre-deployment snapshot. Positive exact-byte serving was verified
+later, before `ready:true`.
 
 At 04:22 and again **04:37 UTC**, DNS returned public IPv4 `104.21.95.122`, `172.67.144.194`;
 the check pinned the first with normal TLS/SNI verification, advertised compression and followed
@@ -129,29 +144,39 @@ host during its separate read-only probe; it was not silently treated as reachab
 
 ## Executed checks and gaps
 
+- Public hosting (2026-11-27, read-only `hosting:live`): both exact paths returned 200 with
+  `no-transform` immutable caching — the record is 732 bytes / envelope SHA-256
+  `87d6c685b88b77ed8ffeb2bd17b4fb580417ce8af7ed6bcb809df2e059741b66` and the archive 51,614 bytes /
+  SHA-256 `2bc4fde8f462feabbf91b929a9b5213eee63183972f34435b53485de225e979d`, matching the signed
+  bytes. HSTS/CSP/X-Frame-Options/Referrer-Policy remain absent on live responses.
 - Registry: **73 Vitest + 9 Python tests**, typecheck, production build, Storybook build, Brave
   production and directory smokes passed (1280/390/320px, keyboard/search/sort, no external requests).
-  Updated an old smoke assertion that assumed HA had no identity request; it still asserts no active
-  OS link. Local pilot screenshot: `/tmp/zdeck-registry-ha-pilot.png`.
+  The production smoke now asserts exactly one active `zdeck://` link, for
+  `home-assistant@0.2.0`, and that the Spotify preview and every other entry stay disabled.
+  Screenshot: `/tmp/zdeck-registry-smoke-narrow.png`.
 - App: **358 unit tests**, typecheck, production frontend build, native library **50 tests**, plugin
   host **87 tests** (3 opt-in checks ignored normally), plus the explicit production-key candidate
   check above passed. Fixture cancellation/stale tokens/tamper/404/digest/collision tests remain.
   Normal and smoke macOS `.app` builds passed. Debug bundles are not notarized production installers.
 - `docker compose config --quiet` passed. `hosting:smoke` was attempted but stopped at `docker info`:
-  the local Docker daemon is unavailable. No Docker runtime/recreation or CT deployment check passed.
+  the local Docker daemon was unavailable, so no Docker runtime check ran from this host. The CT
+  deployment was performed separately by the operator.
 - Compiler is Rust 1.100.0, not the pinned minimum 1.90.0. No new GitHub CI run or Linux/Windows
   packaging result is claimed. Linux layout launcher was adapted to safer isolation, not rerun here.
   Storybook's large-chunk and Node deprecation advisories remain non-failing; smoke-only Rust
   settings-loader dead-code warnings reflect the deliberately detached loader.
-- Outstanding: exact public 200/MIME/immutable bytes, remote positive native install, installed
-  closed/running/hidden handler delivery, browser association, manual dialogs/drop/local priority,
-  cancel/reopen QA in packaged UI, app distribution/notarization, other platforms and real HA devices.
-  No user plugins, credentials, devices, OS association or Cloudflare configuration was changed.
+- Outstanding after the pilot checks: browser association beyond the tested build, manual
+  dialogs/drop/local priority, cancel/reopen QA in the packaged UI, app distribution/notarization,
+  other macOS versions/architectures, Windows/Linux, and real HA devices. With operator approval,
+  HA 0.1.0 was reversibly backed up and replaced by disabled/untrusted 0.2.0, and the local debug
+  app was registered as the macOS URL handler. Credentials, devices and Cloudflare configuration
+  were not changed.
 
-## Exact next deployment step (operator's CT, not executed)
+## Deployment step (operator-executed; retained for reproducibility)
 
-Supply the actual **CT login address + checkout path** to finish this remotely. No additional key
-or signing is needed. Transfer only the public tarball above to a chosen CT staging location.
+The operator completed an equivalent public retention/deploy on the CT; the exact CT address and
+checkout path are not recorded here. No additional key or signing was needed. The reviewed
+procedure transfers only the public tarball above to a chosen CT staging location.
 On that CT, in its existing **dev** registry checkout (preserve local changes; do not switch branches):
 
 ```sh

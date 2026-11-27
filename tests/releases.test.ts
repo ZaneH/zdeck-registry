@@ -26,7 +26,8 @@ function fixture(hosted = false) {
 describe("signed release tooling", () => {
   it("validates the entire checked-in catalogue, trust contract and historical release directory", () => {
     const checked = buildReleases(process.cwd());
-    expect(checked.ready).toEqual([]);
+    // Only the exact published macOS pilot identity is activated; Spotify has no release.
+    expect(checked.ready).toEqual(["home-assistant@0.2.0"]);
     const config = trust(JSON.parse(readFileSync("registry/app-contract.json", "utf8")));
     const { release } = verifyEnvelope(compactJson(Buffer.from(checked.records.get("releases/home-assistant/0.2.0.json")!)), config);
     expect(release.compatibility.platforms).toEqual(["macos"]);

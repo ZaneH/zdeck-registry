@@ -1,17 +1,19 @@
 # Home Assistant — macOS pilot 0.2.0
 
-A real prebuilt, signed archive is prepared for this pilot. **The website install action remains
-unavailable pending public artifact deployment and desktop handoff QA.** A catalogue record is
-not proof that its HTTPS archive is already hosted. See the repository's
-[candidate check record](https://github.com/ZaneH/zdeck-registry/blob/dev/docs/home-assistant-candidate.md).
+A real prebuilt, signed archive is published for this pilot. The website offers an untrusted
+install request for this exact macOS identity; the desktop independently verifies the signed
+record and archive before asking you to review and install. See the repository's
+[pilot check record](https://github.com/ZaneH/zdeck-registry/blob/dev/docs/home-assistant-candidate.md).
 
 ## Compatibility and evidence
 
 - **macOS only** in this exact signed release. Windows and Linux are explicitly rejected by the
   desktop resolver, not silently treated as supported. Their implementations remain in the app;
   verification and separate compatible releases are still required.
-- Tested on macOS 27.0.1, Apple Silicon: bundled native WebKit/IPC archive review and disabled,
-  untrusted installation; restart/no-replace checks in isolated native tests.
+- Tested on macOS 27.0.1, Apple Silicon: public archive download, bundled native review and a
+  fresh disabled, untrusted install of `0.2.0`, which persisted across a normal restart. Browser/OS
+  deep-link delivery was checked with the app closed, running and hidden; an earlier automated
+  lookup anomaly was not reproduced but remains unexplained.
 - Installed Node.js **22.18.0 or newer** is required, not bundled. Forty HA/SDK tests pass using
   Node 22.18.0 and injected HTTP fakes, not real Home Assistant devices.
 - Protocol 1, MIT. Exact source:
@@ -19,9 +21,9 @@ not proof that its HTTPS archive is already hosted. See the repository's
 - Archive: 51,614 bytes; SHA-256
   `2bc4fde8f462feabbf91b929a9b5213eee63183972f34435b53485de225e979d`.
 
-No installed browser/OS URL association, other macOS versions/architectures, Windows/Linux native
-parity, real remote installation or device operation is claimed by these checks. The pilot needs
-an app containing the bundled-origin fix and the independently shipped registry trust root.
+Other macOS versions/architectures, Windows/Linux native parity, real Home Assistant device
+operation and three-OS parity are not claimed. The pilot needs an app containing the
+bundled-origin fix and the independently shipped registry trust root.
 
 ## What it provides
 

@@ -7,17 +7,18 @@ there are no accounts, ratings, reviews, download counts, or publishing API.
 **Prototype status.** Browse, search, filtering, detail pages, and README rendering work.
 Build-time signed release verification and external-key release tooling work; a deliberately
 configured zDeck desktop can verify/download into its reviewed disabled installer. The public
-endpoint/key are configured, but **`ready:false`** keeps install actions disabled. Updates/settings
-are not website features.
+endpoint/key are configured and **`ready:true`** offers the untrusted install request for exactly
+one build-verified identity. Updates/settings are not website features.
 
 - **Spotify** — the reference plugin remains a preview without a registry release.
-- **Home Assistant 0.2.0** — genuine signed **macOS-only pilot**, retained locally with exact-byte
-  verification and isolated native disabled-install evidence. Public JSON/ZIP deployment and
-  installed browser/OS association QA remain pending; Windows/Linux are explicitly rejected.
-  See [the current check record and deployment commands](docs/home-assistant-candidate.md).
+- **Home Assistant 0.2.0** — genuine signed **macOS-only pilot**, publicly hosted and verified,
+  with installed-handler macOS QA on the reviewed pilot build. Windows/Linux are explicitly
+  rejected by the desktop resolver and remain unverified.
+  See [the current check record and remaining gaps](docs/home-assistant-candidate.md).
 
-Nothing on this site installs code. The install control is disabled until a genuine prebuilt `.zdx`
-archive and a signed registry release record exist.
+Nothing on this site installs code. The install control is an untrusted request, offered only for
+a genuine prebuilt `.zdx` archive and a build-verified signed release record on its claimed
+platforms.
 
 ## Self-host with Docker Compose
 
@@ -37,12 +38,13 @@ Compose never signs, publishes, overwrites or deletes releases. Missing releases
 
 See [self-hosting, CT prerequisites and existing Cloudflare Tunnel setup](docs/self-hosting.md)
 for the separate offline retention workflow, backups/permissions and public HTTPS checks.
-`https://zreg.zaaane.com` is the owned live registry page; read-only checks confirmed HTTPS,
-page/health and safe release-path 404s, not positive release serving or installed native handlers.
-`zdeck.zaaane.com` is the separate app website, not another required service. New desktop builds
-independently ship the public registry endpoint/key; custom trust still requires deliberate build
-overrides. Install actions remain unavailable and app-ready stays false. See the
-[first real HA candidate, checks and remaining gates](docs/home-assistant-candidate.md).
+`https://zreg.zaaane.com` is the owned live registry page; checks confirmed HTTPS, page/health and
+positive exact release/archive serving. Installed native macOS handler QA was performed separately,
+not by the website. `zdeck.zaaane.com` is the separate app website, not another required service.
+New desktop builds independently ship the public registry endpoint/key; custom trust still requires
+deliberate build overrides. Only the verified macOS pilot identity offers an install action;
+Spotify stays unavailable. See the
+[HA pilot checks and remaining gaps](docs/home-assistant-candidate.md).
 
 ## Local development
 

@@ -3,9 +3,9 @@
 zDeck now implements the identity-only native link boundary and an explicitly configured signed
 release resolver/downloader feeding its existing local ZIP review/installer. This static website
 never installs code, runs plugins, reads settings or detects an install result. The public
-endpoint/key are configured with `ready:false`; the genuine signed HA macOS pilot is retained
-locally, awaiting CT publication and installed-handler QA. See [releases.md](releases.md) for the
-matching exact signed envelope, public-key bootstrap and maintainer publication gates.
+endpoint/key are active for the genuine signed HA macOS pilot, whose public release and
+installed-handler macOS QA were verified; other platforms and entries remain unactivated. See
+[releases.md](releases.md) for the matching exact signed envelope, public-key bootstrap and maintainer publication gates.
 
 A build-verified published record with an explicitly app-ready contract may offer:
 
