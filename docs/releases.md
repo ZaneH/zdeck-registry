@@ -121,6 +121,14 @@ tags stay optional. No form, account or backend is needed.
 npm run release -- build --root "$PWD" --output /isolated/new-static-output
 ```
 
+For the provided Compose layout, see [self-hosting.md](self-hosting.md): `release retain` is an
+explicit operator-only step that validates the catalogue, signatures and staged archive bytes,
+then atomically adds absent files under persistent `data/releases/` and `data/artifacts/` without
+clobbering existing bytes. Compose does not run it. It requires the signed artifact URL path
+`/artifacts/<id>/<version>.zdx`; keep all historical records in verified Git input and all archives
+available when retaining. It refuses unknown/mutated retained files rather than serving unchecked
+metadata through a publishing API. It does not sign, configure desktop trust or enable the app gate.
+
 5. Publication/deployment is deliberately manual and **not authorized by running these commands**.
    Publish exact reviewed artifact/envelope bytes at final immutable public HTTPS URLs. Serve JSON
    as `application/json`, ZIP as `application/zip`, `200` only; disable content encoding. No redirects

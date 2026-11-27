@@ -3,3 +3,12 @@ dist/
 storybook-static/
 .DS_Store
 npm-debug.log*
+.env
+# Public immutable hosting bytes are operator data, not image-build input.
+data/*
+!data/releases/
+!data/artifacts/
+data/releases/*
+data/artifacts/*
+!data/releases/.gitkeep
+!data/artifacts/.gitkeep

@@ -1,21 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { createHash, generateKeyPairSync } from "node:crypto";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { execFileSync } from "node:child_process";
-import { buildReleases, checkArchive, compactJson, payload, signPayload, trust, verifyEnvelope, type Payload } from "../scripts/releases";
+import { buildReleases, checkArchive, compactJson, payload, retainReleases, signPayload, trust, verifyEnvelope, type Payload } from "../scripts/releases";
 import interop from "./fixtures/ed25519-public-fixture.json";
 import raw from "../registry/plugins.json";
 
-function fixture() {
+function fixture(hosted = false) {
   const root = mkdtempSync(join(tmpdir(), "zdeck-release-fixture-"));
   const { privateKey, publicKey } = generateKeyPairSync("ed25519");
   // Explicitly fixture-only, generated in a private temp directory and removed in finally.
   const keyFile = join(root, "fixture-only-key.pem"); writeFileSync(keyFile, privateKey.export({ type: "pkcs8", format: "pem" }), { mode: 0o600 });
   const config = trust({ schema: 1, ready: false, endpoint: "https://registry.example.test/v1/", keys: [{ id: "fixture-only", publicKey: Buffer.from(publicKey.export({ format: "jwk" }).x!, "base64url").toString("base64") }] });
   const archive = Buffer.from("PK\x03\x04fixture-only-not-a-real-archive");
-  const p: Payload = { schema: 1, id: "spotify", version: "0.1.0", artifact: { url: "https://artifacts.example.test/spotify-0.1.0.zdx", sha256: createHash("sha256").update(archive).digest("hex"), bytes: archive.length }, compatibility: { protocol: 1, runtime: "node", minimum: "22.18.0", platforms: ["macos"] }, source: { repo: raw.plugins[0].repo, commit: "a".repeat(40), license: "MIT" } };
+  const p: Payload = { schema: 1, id: "spotify", version: "0.1.0", artifact: { url: hosted ? "https://registry.example.test/artifacts/spotify/0.1.0.zdx" : "https://artifacts.example.test/spotify-0.1.0.zdx", sha256: createHash("sha256").update(archive).digest("hex"), bytes: archive.length }, compatibility: { protocol: 1, runtime: "node", minimum: "22.18.0", platforms: ["macos"] }, source: { repo: raw.plugins[0].repo, commit: "a".repeat(40), license: "MIT" } };
   const envelope = signPayload(Buffer.from(JSON.stringify(p)), keyFile, "fixture-only");
   const put = (path: string, value: unknown) => { const full = join(root, path); mkdirSync(dirname(full), { recursive: true }); writeFileSync(full, typeof value === "string" ? value : JSON.stringify(value) + "\n"); };
   put("registry/app-contract.json", config); put("registry/releases/spotify/0.1.0.json", envelope); put("registry/readmes/spotify.md", "# Fixture only");
@@ -44,6 +44,45 @@ describe("signed release tooling", () => {
       f.put("registry/releases/spotify/0.2.0.json", f.envelope);
       expect(() => buildReleases(f.root)).toThrow();
     } finally { f.cleanup(); }
+  });
+  it("retains verified public bytes idempotently, refuses overwrite, and preserves history", () => {
+    const f = fixture(true); try {
+      const archives = join(f.root, "staging"), out = join(f.root, "public");
+      mkdirSync(join(archives, "spotify"), { recursive: true });
+      writeFileSync(join(archives, "spotify/0.1.0.zdx"), f.archive);
+      execFileSync(process.execPath, ["--experimental-strip-types", "scripts/releases.ts", "retain", "--root", f.root, "--output", out, "--archives", archives]);
+      expect(readFileSync(join(out, "releases/spotify/0.1.0.json"))).toEqual(Buffer.from(JSON.stringify(f.envelope) + "\n"));
+      expect(readFileSync(join(out, "artifacts/spotify/0.1.0.zdx"))).toEqual(f.archive);
+      // A later catalogue may remove an entry, but verified Git-tracked history is retained.
+      f.put("registry/plugins.json", { schemaVersion: 1, plugins: [] });
+      retainReleases(f.root, out, join(out, "artifacts"));
+      writeFileSync(join(out, "releases/spotify/0.1.0.json"), "changed");
+      expect(() => retainReleases(f.root, out, archives)).toThrow();
+      expect(readFileSync(join(out, "releases/spotify/0.1.0.json"), "utf8")).toBe("changed");
+    } finally { f.cleanup(); }
+  });
+  it("refuses tampered archives, unknown retained records, symlinks and incompatible hosted paths", () => {
+    const f = fixture(true); try {
+      const archives = join(f.root, "staging"), out = join(f.root, "public");
+      mkdirSync(join(archives, "spotify"), { recursive: true });
+      writeFileSync(join(archives, "spotify/0.1.0.zdx"), "tampered");
+      expect(() => retainReleases(f.root, out, archives)).toThrow();
+      writeFileSync(join(archives, "spotify/0.1.0.zdx"), f.archive);
+      retainReleases(f.root, out, archives);
+      const unknown = join(out, "releases/spotify/9.9.9.json");
+      writeFileSync(unknown, JSON.stringify(f.envelope));
+      expect(() => retainReleases(f.root, out, archives)).toThrow();
+      rmSync(unknown);
+      mkdirSync(join(out, "releases/unreviewed"));
+      expect(() => retainReleases(f.root, out, archives)).toThrow();
+      rmSync(join(out, "releases/unreviewed"), { recursive: true });
+      const record = join(out, "releases/spotify/0.1.0.json");
+      rmSync(record); symlinkSync(join(f.root, "registry/releases/spotify/0.1.0.json"), record);
+      expect(() => retainReleases(f.root, out, archives)).toThrow();
+    } finally { f.cleanup(); }
+    const other = fixture(); try {
+      expect(() => retainReleases(other.root, join(other.root, "public"), join(other.root, "staging"))).toThrow();
+    } finally { other.cleanup(); }
   });
   it("refuses fake signatures, unknown keys, unknown fields and unsupported contracts", () => {
     const f = fixture(); try {

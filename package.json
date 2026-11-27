@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006 --no-open --disable-telemetry",
     "storybook:build": "storybook build -o storybook-static --disable-telemetry",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "hosting:smoke": "node scripts/hosting-smoke.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

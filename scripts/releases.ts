@@ -1,6 +1,6 @@
 // Build/release tooling only. No private key is imported into the website bundle.
 import { createHash, createPrivateKey, createPublicKey, sign, verify } from "node:crypto";
-import { readFileSync, readdirSync, mkdirSync, writeFileSync, lstatSync } from "node:fs";
+import { readFileSync, readdirSync, mkdirSync, writeFileSync, lstatSync, existsSync, linkSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseRegistry } from "../src/lib/registry.ts";
@@ -107,6 +107,44 @@ export function buildReleases(root: string): { records: Map<string, string>; rea
   }
   return { records, ready };
 }
+// Operator-only retention; never called by the image build or web server.
+export function retainReleases(root: string, out: string, archives: string): void {
+  const { records } = buildReleases(root);
+  const config = trust(JSON.parse(boundedFile(join(root, "registry/app-contract.json"), 4096).toString("utf8")));
+  const files = new Map<string, Buffer>();
+  for (const [path, bytes] of records) {
+    const { release } = verifyEnvelope(compactJson(Buffer.from(bytes)), config);
+    const artifact = `artifacts/${release.id}/${release.version}.zdx`;
+    requireThat(new URL(release.artifact.url).pathname === `/${artifact}`);
+    const archive = boundedFile(join(archives, release.id, `${release.version}.zdx`), LIMIT);
+    checkArchive(release, archive);
+    files.set(path, Buffer.from(bytes)); files.set(artifact, archive);
+  }
+  // Preflight the entire retained tree: no unchecked metadata, symlinks or changed bytes.
+  function existing(directory: string, prefix: string) {
+    if (!existsSync(directory)) return;
+    requireThat(lstatSync(directory).isDirectory() && !lstatSync(directory).isSymbolicLink());
+    for (const name of readdirSync(directory)) {
+      if (name === ".gitkeep" && !prefix.includes("/")) continue;
+      const path = `${prefix}/${name}`, full = join(directory, name), stat = lstatSync(full);
+      requireThat(!stat.isSymbolicLink());
+      if (stat.isDirectory()) { requireThat([...files.keys()].some(file => file.startsWith(`${path}/`))); existing(full, path); }
+      else { const expected = files.get(path); requireThat(expected && boundedFile(full, expected.length).equals(expected)); }
+    }
+  }
+  mkdirSync(out, { recursive: true }); requireThat(lstatSync(out).isDirectory() && !lstatSync(out).isSymbolicLink());
+  existing(join(out, "releases"), "releases"); existing(join(out, "artifacts"), "artifacts");
+  for (const path of ["artifacts", "releases"]) mkdirSync(join(out, path), { recursive: true });
+  // Publish archives first. A same-directory hard link makes each public file atomic and no-clobber.
+  for (const [path, bytes] of [...files].sort(([a], [b]) => a.localeCompare(b))) {
+    const file = join(out, path);
+    if (existsSync(file)) { requireThat(boundedFile(file, bytes.length).equals(bytes)); continue; }
+    mkdirSync(dirname(file), { recursive: true });
+    const temp = `${file}.${process.pid}.tmp`;
+    writeFileSync(temp, bytes, { flag: "wx", mode: 0o644 });
+    try { linkSync(temp, file); } finally { unlinkSync(temp); }
+  }
+}
 function output(file: string, value: unknown) { mkdirSync(dirname(resolve(file)), { recursive: true }); writeFileSync(file, JSON.stringify(value) + "\n", { flag: "wx", mode: 0o644 }); }
 function main(args: string[]) {
   const [command, ...rest] = args; const flags = new Map<string, string>();
@@ -131,7 +169,10 @@ function main(args: string[]) {
     const root = resolve(get("root")), out = resolve(get("output")); requireThat(flags.size === 0);
     const { records } = buildReleases(root);
     for (const [path, bytes] of records) { const file = join(out, path); mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, bytes, { flag: "wx" }); }
-  } else throw new Error("Use prepare, sign, verify or build; see docs/releases.md.");
+  } else if (command === "retain") {
+    const root = resolve(get("root")), out = resolve(get("output")), archives = resolve(get("archives")); requireThat(flags.size === 0);
+    retainReleases(root, out, archives);
+  } else throw new Error("Use prepare, sign, verify, build or retain; see docs/releases.md.");
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try { main(process.argv.slice(2)); } catch { console.error("Release command failed. No keys or payload data are logged. Check arguments and docs/releases.md; existing output is never overwritten."); process.exitCode = 1; }

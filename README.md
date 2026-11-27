@@ -15,10 +15,33 @@ endpoint/public keys/releases are configured here. Updates/settings are not webs
 Nothing on this site installs code. The install control is disabled until a genuine prebuilt `.zdx`
 archive and a signed registry release record exist.
 
-## Run it
+## Self-host with Docker Compose
 
 ```sh
-npm install
+git clone <your-reviewed-registry-repository-url> zdeck-registry
+cd zdeck-registry
+git switch dev
+docker compose up --build -d
+# http://localhost:1431 (loopback only); health: /healthz
+```
+
+Requires Docker Engine/Desktop and Compose v2.20+; no Node, key, token or domain is needed to
+browse the preview. Override the host port with `REGISTRY_PORT=8081`. The image builds/tests the
+whole static catalogue, then serves it with nonroot Nginx. Read-only bind directories
+`data/releases/` and `data/artifacts/` retain deliberately verified public bytes across rebuilds;
+Compose never signs, publishes, overwrites or deletes releases. Missing releases return 404.
+
+See [self-hosting, CT prerequisites and existing Cloudflare Tunnel setup](docs/self-hosting.md)
+for the separate offline retention workflow, backups/permissions and public HTTPS checks.
+`zreg.zaaane.com` is a proposed registry hostname, not a configured endpoint; `zdeck.zaaane.com`
+is the separate app website, not another required service. Hosting the page does not make the
+official desktop trust this registry: custom endpoint/public keys require an explicitly configured
+and independently distributed desktop build. Seeds remain non-installable and app-ready stays false.
+
+## Local development
+
+```sh
+npm ci
 npm run dev          # http://localhost:1430
 npm test
 npm run build
@@ -73,6 +96,7 @@ The complete schema, validation rules, archive contract, and signing plan are in
 
 - [Registry schema and install contract](docs/registry.md)
 - [Signed releases: tooling, trust bootstrap, immutable hosting and smoke](docs/releases.md)
+- [Self-hosting: Docker Compose, persistent releases and existing Cloudflare Tunnel](docs/self-hosting.md)
 - [Desktop handoff: installs, updates, settings](docs/desktop-handoff.md)
 - [Design notes and reference observations](docs/design.md)
 - [Agent guide](AGENTS.md)
