@@ -18,7 +18,8 @@
     "storybook:build": "storybook build -o storybook-static --disable-telemetry",
     "smoke": "node scripts/smoke.mjs",
     "smoke:directory": "node scripts/directory-smoke.mjs",
-    "hosting:smoke": "node scripts/hosting-smoke.mjs"
+    "hosting:smoke": "node scripts/hosting-smoke.mjs",
+    "hosting:live": "python3 -B scripts/live_hosting.py"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

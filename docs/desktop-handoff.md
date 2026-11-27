@@ -2,8 +2,8 @@
 
 zDeck now implements the identity-only native link boundary and an explicitly configured signed
 release resolver/downloader feeding its existing local ZIP review/installer. This static website
-never installs code, runs plugins, reads settings or detects an install result. This checkout has
-no configured endpoint/keys or published installable seeds. See [releases.md](releases.md) for the
+never installs code, runs plugins, reads settings or detects an install result. The public endpoint/key are configured with `ready:false`; no installable seeds or signed release
+are published by this change. See [releases.md](releases.md) for the
 matching exact signed envelope, public-key bootstrap and maintainer publication gates.
 
 A build-verified published record with an explicitly app-ready contract may offer:
@@ -29,8 +29,9 @@ OS handler or grants a website native privileges.
 
 Release QA still needs installed handlers, closed/running/tray-hidden delivery, cancellation,
 local priority, actual dialogs/drop and packaged-webview/filesystem behavior on **Windows, macOS
-and Linux**. A browser test/no-bundle build is not evidence of that parity. Production publication,
-keys, distributed configured builds and immutable hosting remain maintainer prerequisites.
+and Linux**. A browser test/no-bundle build is not evidence of that parity. Deliberate signing/publication,
+independent public-key review, distributed configured builds and exact positive immutable hosting
+checks remain maintainer prerequisites.
 
 ## Still out of scope
 

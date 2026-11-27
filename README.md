@@ -6,8 +6,8 @@ there are no accounts, ratings, reviews, download counts, or publishing API.
 
 **Prototype status.** Browse, search, filtering, detail pages, and README rendering work.
 Build-time signed release verification and external-key release tooling work; a deliberately
-configured zDeck desktop can verify/download into its reviewed disabled installer. No production
-endpoint/public keys/releases are configured here. Updates/settings are not website features. The two seed entries are honestly unpublished:
+configured zDeck desktop can verify/download into its reviewed disabled installer. The public
+endpoint/key are configured, but `ready:false` and no signed release is published by this change. Updates/settings are not website features. The two seed entries are honestly unpublished:
 
 - **Spotify** — the existing zDeck reference plugin, shown as a preview. No registry release is published.
 - **Home Assistant** — an in-development placeholder. No plugin release or runtime claim exists.
@@ -33,12 +33,16 @@ Compose never signs, publishes, overwrites or deletes releases. Missing releases
 
 See [self-hosting, CT prerequisites and existing Cloudflare Tunnel setup](docs/self-hosting.md)
 for the separate offline retention workflow, backups/permissions and public HTTPS checks.
-`zreg.zaaane.com` is a proposed registry hostname, not a configured endpoint; `zdeck.zaaane.com`
-is the separate app website, not another required service. Hosting the page does not make the
-official desktop trust this registry: custom endpoint/public keys require an explicitly configured
-and independently distributed desktop build. Seeds remain non-installable and app-ready stays false.
+`https://zreg.zaaane.com` is the owned live registry page; read-only checks confirmed HTTPS,
+page/health and safe release-path 404s, not positive release serving or installed native handlers.
+`zdeck.zaaane.com` is the separate app website, not another required service. New desktop builds
+independently ship the public registry endpoint/key; custom trust still requires deliberate build
+overrides. Seeds remain non-installable and app-ready stays false. See the
+[first real HA candidate, checks and remaining gates](docs/home-assistant-candidate.md).
 
 ## Local development
+
+Use Node 22.18+ and Python 3.10+ (standard library only, for archive/hosting tests and submissions).
 
 ```sh
 npm ci
@@ -60,6 +64,10 @@ safe README behavior, no external requests, and a narrow viewport. It saves a sc
 `/tmp`.
 
 ## Add a plugin
+
+With a prepared archive, prefer the [generated submission bundle / read-only GitHub intake workflow](docs/submissions.md):
+manifest identity and archive facts are generated, not retyped. Open a normal per-plugin PR; no
+auto-PR token, auto-signing or automatic publication. Manual records are also supported:
 
 1. Add the plugin's own `README.md` under `registry/readmes/` (reuse the repository README; do not
    write a second one).
@@ -94,6 +102,8 @@ The complete schema, validation rules, archive contract, and signing plan are in
 
 ## Documents
 
+- [Per-plugin submissions and GitHub workflow](docs/submissions.md)
+- [First Home Assistant candidate and exact maintainer commands](docs/home-assistant-candidate.md)
 - [Registry schema and install contract](docs/registry.md)
 - [Signed releases: tooling, trust bootstrap, immutable hosting and smoke](docs/releases.md)
 - [Self-hosting: Docker Compose, persistent releases and existing Cloudflare Tunnel](docs/self-hosting.md)

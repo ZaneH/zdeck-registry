@@ -108,7 +108,8 @@ explicit historical-retention review: this helper refuses retained records absen
 build input; it is not a revocation/migration tool. See the release guide's older-desktop caveat.
 
 Self-hosting the **page** is easy; trusting a custom registry is a separate desktop build decision.
-The official app does **not** discover or trust arbitrary self-hosted registries. Independently
+New desktop builds ship the public `zreg.zaaane.com` endpoint/key independently. They do **not**
+discover or trust arbitrary self-hosted registries. Independently
 configure/distribute the desktop's public endpoint and reviewed public keys as described in
 [releases.md](releases.md). Never fetch trust keys from the same server to bootstrap trust. No
 runtime custom-registry UI is implemented here. Seed entries remain preview/in-development,
@@ -116,10 +117,12 @@ runtime custom-registry UI is implemented here. Seed entries remain preview/in-d
 
 ## Existing Cloudflare Tunnel on the CT
 
-Proposed prototype names are **examples**, not configured services:
+The operator's owned public names (2026-11-27):
 
-- `https://zreg.zaaane.com` — this registry, if the operator owns/routes that name.
-- `https://zdeck.zaaane.com` — the separate app website, **not** a second Compose service here.
+- `https://zreg.zaaane.com` — this registry; read-only DNS/HTTPS/page/health/404 checks passed.
+  Positive release JSON/ZIP serving remains unverified; no release was published here.
+- `https://zdeck.zaaane.com` — the separate app website, **not** a second Compose service here
+  and not verified by the registry live check.
 
 Keep using your externally managed tunnel. No `cloudflared` container or token is needed in this
 repository. On a tunnel daemon running directly on the **same CT**, add an ingress rule through
@@ -163,7 +166,10 @@ check does not prove public DNS/TLS/Cloudflare behavior or desktop installation 
 
 ## Checks
 
-See [the implementation check record](self-hosting-checks.md) for executed checks and explicit gaps.
+See [the implementation check record](self-hosting-checks.md) for historical checks and
+[the current live/candidate record](home-assistant-candidate.md) for executed checks and explicit gaps.
+Local builds/tests now also require Python 3.10+ (standard library); the Docker build stage
+installs it, but the final static Nginx image does not contain Python.
 
 ```sh
 docker compose config
@@ -173,7 +179,19 @@ npm run build
 npm run storybook:build
 CHROME_BIN='/Applications/Brave Browser.app/Contents/MacOS/Brave Browser' npm run smoke
 npm run hosting:smoke
+npm run hosting:live
+# After independently verifying a published local envelope/archive with release verify:
+npm run hosting:live -- --record /reviewed/release.json --archive /reviewed/plugin.zdx
 ```
+
+`hosting:live` only contacts `zreg.zaaane.com:443`, never arbitrary metadata hosts, credentials or
+proxies. It resolves public addresses, pins one answer, validates normal TLS/SNI, sends bounded
+GETs with compression advertised, and refuses redirects/encoding/wrong MIME or bytes. Without
+`--record/--archive` it asserts the first HA version is still 404 and explicitly reports that
+positive immutable release serving is unverified. With them it compares **exact** public JSON/ZIP
+bytes and successful immutable/no-transform headers. This is a serving check, not signature or
+native-handler QA. Missing additional page security headers are reported, not treated as
+cryptographic install evidence. Results are JSON on stdout; save outside the checkout if desired.
 
 `hosting:smoke` requires a running Docker daemon and local Node 22.18+. It builds this image and
 uses a unique temporary Compose project, random loopback port and **owned temporary** public bind

@@ -1,6 +1,11 @@
 {
   "schema": 1,
   "ready": false,
-  "endpoint": null,
-  "keys": []
+  "endpoint": "https://zreg.zaaane.com/",
+  "keys": [
+    {
+      "id": "registry-2026-01",
+      "publicKey": "H/shqLoptu026ur/SMHgpyE2K0Hw+kgtLB2cU6wkL7w="
+    }
+  ]
 }

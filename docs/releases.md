@@ -1,9 +1,12 @@
 # Maintainer signed releases v1
 
-Implemented tooling, **not a published service**. The checked-in `registry/app-contract.json` is
-`ready: false`, `endpoint: null`, `keys: []`; no production URLs/keys/artifacts are supplied. The
-Spotify/Home Assistant seeds stay preview/in-development with `release: null`. Do not enable them
-or invent a review, checksum or signature to demonstrate installation.
+The public site `https://zreg.zaaane.com` is reachable; this is **not yet a published plugin
+release service**. `registry/app-contract.json` supplies that endpoint and public key
+`registry-2026-01` with **`ready:false`**. The independent desktop ships the same public trust root.
+Spotify/Home Assistant remain preview/in-development with `release:null`. No production private
+key was accessed. Do not enable links or invent platform evidence, review or signatures.
+See the [first real HA candidate and exact next commands](home-assistant-candidate.md) and
+[per-plugin generated submissions](submissions.md).
 
 ## Immutable contract (matches zDeck `docs/registry-releases.md`)
 
@@ -57,7 +60,11 @@ bytes, **not PEM/SPKI**. Configure the independently distributed desktop at buil
 - `ZDECK_REGISTRY_PUBLIC_KEYS='[{"id":"<reviewed-id>","publicKey":"<reviewed-public-base64>"}]'`
 - optional `ZDECK_REGISTRY_WEBSITE_URL` for the fixed external catalogue menu action.
 
-No default values/keys are invented. The desktop never trusts keys fetched with a release.
+New desktop builds default to `https://zreg.zaaane.com/` and the independently checked-in public
+key. With neither release override set, those defaults apply. To override, supply **both** URL
+and keys; partial/empty/invalid custom configuration fails closed instead of mixing trust roots.
+The website override is separate (defaults to the public catalogue; empty disables the menu).
+The desktop never trusts keys fetched with a release.
 `registry/app-contract.json` is the website's **manual assertion that a distributed configured app
 is ready**, not the desktop trust root. It contains `{schema:1,ready:boolean,endpoint:string|null,
 keys:[{id,publicKey}]}` (at most eight unique IDs). Set the same reviewed endpoint/public keys here;
@@ -167,9 +174,11 @@ The website has no lookup/download busy/cancel state: it only hands an untrusted
 those states live in the desktop Storybook. No page can detect a handler/install result reliably.
 Website Storybook includes explicit fictional AppReady/PublishedUnready/Preview handoffs, enabled
 only by a Storybook-only exact-identity allowlist. Never click those fixture OS links; they are
-rendering checks, not install evidence. The production app contract and seed entries are unchanged.
+rendering checks, not install evidence. The seed availability remains unchanged; the public app contract is configured but still not ready.
 
-### Checks executed for this milestone
+### Historical checks executed for the initial tooling milestone
+
+For current live/candidate checks and gaps, see [home-assistant-candidate.md](home-assistant-candidate.md).
 
 On the macOS development host: **41 tests passed**, standalone typecheck, production Vite build,
 Storybook build and the existing Brave production smoke passed. Focused Brave Storybook checks

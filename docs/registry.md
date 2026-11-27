@@ -66,7 +66,8 @@ See [releases.md](releases.md) for Ed25519 domain-separated exact bytes, strict 
 external-key tooling, immutable static output and hosting, independent desktop trust distribution,
 rotation/revocation and concrete isolated smoke. Nothing generates a production signing key.
 
-`app-contract.json` is checked in **not ready**, with no endpoint/public keys. `ready:true` is an
+`app-contract.json` is checked in **not ready**, with the owned public endpoint and reviewed
+public key; new desktop builds ship the independent matching trust root. `ready:true` is an
 explicit maintainer assertion that a matching configured desktop build and genuine immutable
 releases have been distributed and verified on all three OSes. Only a published record with a
 build-verified envelope and that active contract can offer an install action. A valid signed
