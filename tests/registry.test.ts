@@ -154,11 +154,12 @@ describe("registry validation", () => {
 });
 
 describe("install requests", () => {
-  it("has no request for the unpublished seed entries", () => {
+  it("keeps preview and staged macOS pilot actions unavailable until app activation", () => {
     const result = parseRegistry(raw, READMES);
     if (!result.ok) throw new Error(result.error);
     for (const plugin of result.registry.plugins) {
-      expect(installRequestUrl(plugin)).toBeNull();
+      expect(installRequestUrl(plugin)).toBe(plugin.id === "home-assistant"
+        ? "zdeck://plugins/install?id=home-assistant&version=0.2.0" : null);
       expect(canOfferInstall(plugin)).toBe(false);
     }
   });
@@ -208,6 +209,6 @@ describe("directory filtering", () => {
   it("filters by tag and resets with the all tag", () => {
     expect(selectPlugins(plugins, { ...DEFAULT_DIRECTORY, categories: ["smart-home"] }).map((plugin) => plugin.id)).toEqual(["home-assistant"]);
     expect(selectPlugins(plugins, DEFAULT_DIRECTORY)).toHaveLength(2);
-    expect(tagsOf(plugins)).toEqual(["in-development", "macos", "media", "smart-home"]);
+    expect(tagsOf(plugins)).toEqual(["macos", "media", "pilot", "smart-home"]);
   });
 });

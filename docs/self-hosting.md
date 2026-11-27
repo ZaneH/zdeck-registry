@@ -112,15 +112,18 @@ New desktop builds ship the public `zreg.zaaane.com` endpoint/key independently.
 discover or trust arbitrary self-hosted registries. Independently
 configure/distribute the desktop's public endpoint and reviewed public keys as described in
 [releases.md](releases.md). Never fetch trust keys from the same server to bootstrap trust. No
-runtime custom-registry UI is implemented here. Seed entries remain preview/in-development,
-`app-contract.json` remains not ready, and this repository supplies no genuine production release.
+runtime custom-registry UI is implemented here. Spotify remains a preview; HA 0.2.0 has a genuine
+signed macOS pilot record, locally retained bytes and a public-only deploy bundle.
+`app-contract.json` remains not ready pending deployment and applicable native handoff QA;
+see [the exact check record](home-assistant-candidate.md).
 
 ## Existing Cloudflare Tunnel on the CT
 
 The operator's owned public names (2026-11-27):
 
 - `https://zreg.zaaane.com` — this registry; read-only DNS/HTTPS/page/health/404 checks passed.
-  Positive release JSON/ZIP serving remains unverified; no release was published here.
+  Positive release JSON/ZIP serving remains unverified; HA 0.2.0 still returns 404 pending CT
+  deployment. The CT access address/repository path has not been supplied; no target is guessed.
 - `https://zdeck.zaaane.com` — the separate app website, **not** a second Compose service here
   and not verified by the registry live check.
 

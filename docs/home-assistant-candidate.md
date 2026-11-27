@@ -1,148 +1,208 @@
-# First Home Assistant release candidate — 2026-11-27
+# Home Assistant 0.2.0 — signed macOS pilot, deployment blocked
 
-**Prepared locally, unsigned, not published, not installable from the website.** No private key
-was accessed, no production keys generated, and no push, PR, workflow dispatch, upload or deployment
-was performed. Both repositories started on clean `dev` except the preserved registry
-`debug-storybook.log`. Deployed source is not assumed to match either checkout.
+Updated **2026-11-27 04:37 UTC**. A genuine signed release now exists locally. **It is not yet
+hosted:** public JSON/ZIP paths still return direct 404s and the live page still shows the old
+in-development entry. Website `ready:false` deliberately keeps install actions unavailable.
+The remaining deployment blocker is the operator's **actual CT login address and registry checkout
+path**; neither is in project deployment configuration. No abandoned Dokku target, guessed CT,
+SSH config, Cloudflare/DNS change or remote infrastructure creation was used.
 
-## Exact candidate
+## Exact immutable release
 
-- Source repository: `https://github.com/ZaneH/zdeck`
-- Committed source: `c688567f8359f6d20ff4a7ee30ba6c18e25cc963` (local commit; remote availability is
-  **not** asserted until the operator authorizes pushing/reviewing it).
-- Manifest identity: `home-assistant` **0.2.0**, protocol 1; packaged Node entrypoint/SDK, MIT.
-- Archive: **51,614 bytes**, SHA-256
-  `2bc4fde8f462feabbf91b929a9b5213eee63183972f34435b53485de225e979d`.
-- Durable local bundle:
-  `/Users/me/.local/state/zdeck-release-candidates/home-assistant-0.2.0-c688567/`
-  containing `home-assistant.zdx`, archived `manifest.json`, `LICENSE`, `candidate.json`, generated
-  preview record/README and `PR.md`. A reproducible copy is at app `dist/plugins/home-assistant.zdx`,
-  but app/frontend builds clear `dist`; use the durable bundle for review/signing.
-- `candidate.json` deliberately has `platforms:[]`, `nativeQA:"not-established"`, `signable:false`.
-  It is **not** a signed payload and cannot be passed to `release sign`.
-
-The original HA integration was tested live by the operator on one OS only. That does not establish
-which platforms/minimum runtimes are reviewable for this signed archive or installed URL-handler
-parity. The candidate has no support assertions. No signable payload/envelope was produced. The
-catalogue's curated HA entry remains `in-development`, `release:null`; the generator's preview
-record is evidence for review, not blindly substituted into the catalogue.
-
-## Public bootstrap, still gated
-
-Website `registry/app-contract.json`: `https://zreg.zaaane.com/`, key `registry-2026-01`, **ready:false**.
-The app independently embeds the public key in `src-tauri/registry-public-keys.json` and defaults
-the website/lookup base to that URL. No runtime server key discovery. The public-only file was
-explicitly supplied for this task; no private file was opened.
-
-Public raw Ed25519 key base64: `H/shqLoptu026ur/SMHgpyE2K0Hw+kgtLB2cU6wkL7w=`.
-SHA-256 of its decoded 32 bytes:
-`520d9f831d334a20ccf0daec25cd9eaedb5dde291a3af0e2313af2710b4a1457`.
-Review that fingerprint independently before distributing trust. Environment overrides remain
-supported; setting either release override requires both URL and keys, with no fallback mixing.
-An empty pair disables resolution. The website override remains separate; empty disables its menu.
-
-## Live evidence (public read-only GET, no credentials)
-
-At **2026-11-27 03:53 UTC**, DNS returned public IPv4 `104.21.95.122`, `172.67.144.194`; the
-script pinned the first and normal TLS certificate/hostname verification succeeded on port 443.
-All ten probes passed with compression advertised and no redirect or `Content-Encoding`:
-
-| Paths | Result |
+| Fact | Value |
 | --- | --- |
-| `/` | 200 `text/html`, 1,035 bytes; `no-cache, no-transform`, `nosniff` |
-| `/healthz` | 200 `text/plain`, exact `ok\n`; same cache/nosniff policy |
-| `/releases`, `/artifacts`, malformed paths and exact missing versioned probe paths | Direct 404, `no-store, no-transform`, `nosniff`; no SPA 200/immutable negative caching |
-| `/releases/home-assistant/0.2.0.json`, `/artifacts/home-assistant/0.2.0.zdx` | Same direct 404 policy; **nothing published** |
+| ID / version / protocol | `home-assistant` / `0.2.0` / `1` |
+| Source | `https://github.com/ZaneH/zdeck`, commit `c688567f8359f6d20ff4a7ee30ba6c18e25cc963` |
+| Licence / runtime | MIT / installed Node **22.18.0+**, not bundled |
+| Signed platforms | **`["macos"]` only**; Windows/Linux explicitly rejected before archive download |
+| Archive | **51,614 bytes**, 11 files, 50,272 unpacked bytes |
+| Archive SHA-256 | `2bc4fde8f462feabbf91b929a9b5213eee63183972f34435b53485de225e979d` |
+| Signed public envelope SHA-256 | `87d6c685b88b77ed8ffeb2bd17b4fb580417ce8af7ed6bcb809df2e059741b66` |
+| Registry key ID | `registry-2026-01` |
+| Final record URL | `https://zreg.zaaane.com/releases/home-assistant/0.2.0.json` |
+| Final artifact URL | `https://zreg.zaaane.com/artifacts/home-assistant/0.2.0.zdx` |
 
-A repeat at **04:05 UTC** passed the same ten probes. Cloudflare reported `DYNAMIC`.
-HSTS, CSP, X-Frame-Options and Referrer-Policy were absent in these
-responses; policy hardening at the operator's tunnel/origin remains a separate review. The script
-reports those gaps. No positive JSON/ZIP MIME, exact bytes, successful immutable caching, every DNS
-answer/edge, public app-site behavior or installed native handler was verified. No remote
-configuration was changed. Repeat with `npm run hosting:live`; after publication use exact local
-reviewed envelope/archive arguments from [self-hosting.md](self-hosting.md).
+The app pilot fix/checks were committed and pushed on `dev` as
+[`ddbaca5`](https://github.com/ZaneH/zdeck/commit/ddbaca594e2cca0e9000b5c5cde70efe855cc90b),
+including previously unpushed `ae80da1` and `c688567`. The exact candidate manifest was then
+retrieved unauthenticated from GitHub at `c688567…` and compared byte for byte successfully.
+Use this pilot app build (or a later reviewed one), not an older installed app.
 
-## Checks performed
+The external private-key file was used **only by the existing reviewed `release sign --key` CLI**,
+under explicit operator authorization. No key bytes were read into agent context, printed, copied,
+committed, uploaded, put in environment variables, Docker or CI. No new key was generated.
+The public key matches the independently shipped desktop key and registry app contract:
+`H/shqLoptu026ur/SMHgpyE2K0Hw+kgtLB2cU6wkL7w=`, decoded-key SHA-256
+`520d9f831d334a20ccf0daec25cd9eaedb5dde291a3af0e2313af2710b4a1457`.
 
-- Registry: `npm test` — **73 Vitest + 9 Python standard-library tests**; `npm run typecheck`,
-  `npm run build`, `npm run storybook:build`, Brave `npm run smoke` and `npm run smoke:directory`
-  passed. Directory smoke exercised 1280/390/320px, keyboard filters, long names, ordering,
-  back/reload and zero external requests. Existing Storybook large-chunk/Node deprecation
-  advisories remain non-failing. Submission tests include traversal, source-root escape,
-  symlinks/special ZIP entries, duplicates/case/path aliases, hidden bytes/local-header mismatch,
-  forged central-entry counts, CRC/size limits, invalid identity/source URLs and no-clobber output.
-  Both registry workflows and the app desktop workflow parsed as YAML locally; no GitHub workflow
-  execution or cross-platform runner result is claimed.
-- App: **358 unit tests**, typecheck and production frontend build passed. Plugin host:
-  **86 passed, 2 opt-in tests ignored** in the regular run; native app library: **50 passed**.
-  A full first native-library run exposed two old tests assuming no default resolver; those now
-  inject unavailable/configured state explicitly, and the full rerun passed. Native debug
-  no-bundle build passed; binary built but never launched against user storage.
-- Repackaged HA **after** the final native build cleared `dist`. Its opt-in local ZIP/install test
-  passed (11 files, 50,272 unpacked bytes). The new opt-in **fixture-key** test also passed using
-  these exact bytes through signature verification → injected HTTP → actual ZIP/manifest review
-  → disabled/untrusted temporary install → restart with no enabled plugin. Its key exists only
-  in test process memory; its fictional source/platform assertions are not release evidence.
-- Local compiler: Rust **1.100.0**. Dependency metadata identified locked Tauri core/muda/tray-icon
-  requiring 1.90; app commit `ae80da1` corrects desktop `rust-version` to **1.90** and pins CI to
-  **1.90.0**. No local 1.90 compiler is installed; that exact minimum and future GitHub CI were
-  **not run**. Windows/Linux native/installer checks remain open.
-- `docker compose config --quiet` passed. `npm run hosting:smoke` was attempted and stopped at
-  `docker info`: the daemon at `/Users/me/.docker/run/docker.sock` is unavailable. No image
-  runtime/retention-recreation smoke or Docker deployment was performed. No operator storage/volumes were deleted.
+Before preparing/signing, live exact-version paths were verified missing. No existing release bytes
+or version were overwritten. All retained outputs used the CLI's no-clobber path; a repeat retain
+accepted the unchanged bytes. Do not re-sign this version to add platforms or change any fact;
+publish a new exact version. The Git envelope is public, not the private key.
 
-## Deliberate next step — NOT executed
+Durable bundle root:
 
-First obtain source/licence review and evidence for the actual runtime minimum and claimed
-platforms. Distribute configured app builds and complete installed macOS/Windows/Linux native
-handler, cancellation/local-priority, dialogs/drop and no-replace QA **before ready:true**.
-Single-platform evidence is not three-platform QA. Do not sign `candidate.json` or make up a
-platform list just to generate a release.
+```text
+/Users/me/.local/state/zdeck-release-candidates/home-assistant-0.2.0-c688567/
+  home-assistant.zdx              original reviewed archive
+  manifest.json, LICENSE          original extracted facts
+  candidate.json                 historical UNSIGNED preparation, not current QA evidence
+  payload.json, release.json      actual signed facts and public envelope
+  staging/artifacts/home-assistant/0.2.0.zdx
+  public-deploy/artifacts/home-assistant/0.2.0.zdx
+  public-deploy/releases/home-assistant/0.2.0.json
+  public-deploy/SHA256SUMS
+  home-assistant-0.2.0-public.tar.gz
+```
 
-Once the compatibility assertions are justified, from this registry checkout:
+The **public-only tarball** is 17,588 bytes, SHA-256
+`7f16fced46da336b4d60c830dad55830a8b70c22a4cc2e133bc5efdbb359ad60`.
+It contains only the archive, signed envelope and checksums, **no key, credentials or user data**.
+The same public bytes were retained under local ignored `data/`. Git push alone does **not**
+transfer those bytes to the CT's bind directories.
+
+## Evidence supporting this limited pilot
+
+- **Source/contents:** every archived source/SDK/licence/README/manifest file was compared byte for
+  byte with commit `c688567…`. The two generated files were checked against the reviewed packager:
+  the marker and package metadata with the bundled SDK dependency; no install lifecycle script,
+  npm installation, symlink or fetched dependency is needed. Static source review covered HA URL/
+  token handling, redirect refusal, streaming/deadline limits, entity binding, readback and no-retry
+  behavior, plus the bundled SDK's bounded JSONL protocol. Signatures are not a sandbox/safety guarantee.
+- **Runtime baseline:** downloaded the official Node 22.18.0 darwin-arm64 runtime into a temporary
+  tool directory and checked its archive against the official HTTPS SHASUMS256 list (not a signed
+  distribution attestation). **40 HA/SDK tests passed** on that exact version. HTTP is injected;
+  no real HA endpoint, token, device or installed plugin entrypoint was used.
+- **Actual macOS bundle/WebKit/IPC:** built `zDeck Smoke.app` with current bundled frontend assets,
+  separate `com.zdeck.native-smoke` identifier and `zdeck-smoke` scheme. The opt-in native feature
+  creates fresh native data/plugin/device/preference roots, uses mock in-memory credentials and
+  attaches no runtime candidates or settings loader. It never restores real user plugins. Native
+  archive delivery → actual bundled WebKit IPC review → **Install disabled** passed, with exact
+  SHA, untrusted catalogue, empty enabled preferences and no running plugin snapshots. Owned test
+  roots were removed after inspection. Smoke executable SHA-256:
+  `f3d5d0f9c45f11bf37b67e680f6e79e7ec3adaa075c87fc0b19afe249046be58`.
+- This real launch found a blocker missed by fixtures: WebKit reports `tauri://localhost` without
+  a trailing slash, while the guard accepted only `/`. The fix normalizes **only that exact local
+  root**; remote origins, credentials, ports, paths and queries remain rejected and tested.
+- The same isolated bundle received the fixed native delivery hook's HA identity, used the real
+  compiled production endpoint/key, and failed closed on the current **public 404**, then canceled
+  with nothing installed. No URL handler/default application was registered or replaced.
+- **Actual production signature + native installer:** the opt-in Rust test used this exact envelope
+  and archive, independently shipped public key and source/hash assertions. It passed signature →
+  injected local HTTP bytes → real ZIP review → isolated disabled/untrusted install → restart with
+  empty enabled state → no-replace collision refusal, and rejected signature tamper/Windows/Linux.
+  **This positive test is local transport evidence, not public download evidence.**
+- A normal configured `zDeck.app` was also freshly built (`--debug --bundles app`), **not launched**.
+  Info.plist declares `zdeck`, identifier `com.deck.local`; binary contains the real endpoint/public
+  key. Executable SHA-256: `8c99c7b86758c697029f0e472a57ab025b39f5dee02eedd29d8a9957fda1948d`.
+  No app was installed/distributed, copied to Applications or substituted for the user's handler.
+
+These checks were on **macOS 27.0.1, Apple Silicon**. They support a narrowly described macOS
+installation pilot, not other macOS versions/architectures, real device operation or three-OS
+parity. Windows/Linux implementations remain required and their native verification remains open.
+The website gate is per offered release's **claimed platforms**, not a blanket three-OS prerequisite.
+It still requires positive public hosting, distributed configured build and installed-handler QA
+on every claimed platform; those macOS handoff checks are not yet complete.
+
+## Live state, distinct from local state
+
+At 04:22 and again **04:37 UTC**, DNS returned public IPv4 `104.21.95.122`, `172.67.144.194`;
+the check pinned the first with normal TLS/SNI verification, advertised compression and followed
+no redirects. Page/health and safe negative-path policies passed. HA exact-version JSON/ZIP returned
+**404 `no-store, no-transform`**, no redirect or Content-Encoding. Positive-hosting check correctly
+failed `Expected 200, got 404` for both. No partial success is called a release deployment.
+
+Live static bytes (04:36 UTC):
+
+- `/`: 1,035 bytes, SHA-256 `123d22ce20aa1899060bd3f281de19205a3c54d0b29f95f295c4a3ab0db47753`.
+- `/assets/index-2bDSEbNu.js`: 431,408 bytes,
+  SHA-256 `f2480a42909749b8049fe72f60db1cdfbea6a40893b8b94b2c0ff778ed3eddbc`.
+- `/assets/index-CUpVTRwq.css`: 18,213 bytes,
+  SHA-256 `c8ba737bc65f80fdff0f56d4a1c378f3de4f28b1d445a4f92df9e676214568d3`.
+
+Brave confirmed the **old** HA placeholder with disabled install; screenshot
+`/tmp/zdeck-pilot-live-page.png`. An initial screenshot used the wrong plural route, then the
+correct `/#/plugin/home-assistant` was checked. Current local build is a different JS asset,
+`index-CqN-Lk8L.js`; deployed source is not inferred from Git. HSTS/CSP/X-Frame-Options/
+Referrer-Policy were absent on live responses. `zdeck.zaaane.com` failed DNS resolution from this
+host during its separate read-only probe; it was not silently treated as reachable.
+
+## Executed checks and gaps
+
+- Registry: **73 Vitest + 9 Python tests**, typecheck, production build, Storybook build, Brave
+  production and directory smokes passed (1280/390/320px, keyboard/search/sort, no external requests).
+  Updated an old smoke assertion that assumed HA had no identity request; it still asserts no active
+  OS link. Local pilot screenshot: `/tmp/zdeck-registry-ha-pilot.png`.
+- App: **358 unit tests**, typecheck, production frontend build, native library **50 tests**, plugin
+  host **87 tests** (3 opt-in checks ignored normally), plus the explicit production-key candidate
+  check above passed. Fixture cancellation/stale tokens/tamper/404/digest/collision tests remain.
+  Normal and smoke macOS `.app` builds passed. Debug bundles are not notarized production installers.
+- `docker compose config --quiet` passed. `hosting:smoke` was attempted but stopped at `docker info`:
+  the local Docker daemon is unavailable. No Docker runtime/recreation or CT deployment check passed.
+- Compiler is Rust 1.100.0, not the pinned minimum 1.90.0. No new GitHub CI run or Linux/Windows
+  packaging result is claimed. Linux layout launcher was adapted to safer isolation, not rerun here.
+  Storybook's large-chunk and Node deprecation advisories remain non-failing; smoke-only Rust
+  settings-loader dead-code warnings reflect the deliberately detached loader.
+- Outstanding: exact public 200/MIME/immutable bytes, remote positive native install, installed
+  closed/running/hidden handler delivery, browser association, manual dialogs/drop/local priority,
+  cancel/reopen QA in packaged UI, app distribution/notarization, other platforms and real HA devices.
+  No user plugins, credentials, devices, OS association or Cloudflare configuration was changed.
+
+## Exact next deployment step (operator's CT, not executed)
+
+Supply the actual **CT login address + checkout path** to finish this remotely. No additional key
+or signing is needed. Transfer only the public tarball above to a chosen CT staging location.
+On that CT, in its existing **dev** registry checkout (preserve local changes; do not switch branches):
+
+```sh
+cd "${REGISTRY_CHECKOUT:?Set the actual existing CT registry checkout path}"
+test "$(git branch --show-current)" = dev
+git status --short                 # stop and review any existing changes
+# After reviewing status and the pushed dev commit:
+git pull --ff-only origin dev
+BUNDLE="${PUBLIC_BUNDLE:?Set the transferred public tarball's absolute path}"
+printf '%s  %s\n' \
+  7f16fced46da336b4d60c830dad55830a8b70c22a4cc2e133bc5efdbb359ad60 "$BUNDLE" | sha256sum -c -
+STAGING=$(mktemp -d)
+tar -xzf "$BUNDLE" -C "$STAGING" --no-same-owner --no-same-permissions
+(cd "$STAGING" && sha256sum -c SHA256SUMS)
+docker compose build               # tests + whole catalogue/signature validation before retention
+umask 022
+mkdir -p data/releases data/artifacts
+# No Node install needed on the CT; only public paths are mounted, no key or credentials.
+docker run --rm --network none --read-only --cap-drop ALL \
+  --security-opt no-new-privileges -u "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$PWD,dst=/registry,readonly" \
+  --mount "type=bind,src=$STAGING,dst=/staging,readonly" \
+  --mount "type=bind,src=$PWD/data,dst=/public" -w /registry \
+  node:22.18.0-alpine3.22 node --experimental-strip-types scripts/releases.ts retain \
+  --root /registry --archives /staging/artifacts --output /public
+docker compose up -d --no-build
+```
+
+This is the existing validated no-overwrite retention path, not ad-hoc copying into served storage.
+The Docker command is provided for the operator, **not runtime-tested here** because Docker is down.
+If future history exists, supply all historical archives too (the helper refuses incomplete/mutated
+history). Do not delete history, alter keys, overwrite paths, use `down -v` or change the tunnel.
+
+Then from the maintainer checkout verify public serving and actual native download:
 
 ```sh
 CANDIDATE=/Users/me/.local/state/zdeck-release-candidates/home-assistant-0.2.0-c688567
-# Set REVIEWED_PLATFORMS to only evidenced lowercase comma-separated platforms; no default.
-# Source commit must also be made publicly reviewable under separate push authorization.
-npm run release -- prepare \
-  --manifest "$CANDIDATE/manifest.json" --archive "$CANDIDATE/home-assistant.zdx" \
-  --runtime node --platforms "${REVIEWED_PLATFORMS:?Set only platforms supported by reviewed evidence}" \
-  --url https://zreg.zaaane.com/artifacts/home-assistant/0.2.0.zdx \
-  --repo https://github.com/ZaneH/zdeck \
-  --commit c688567f8359f6d20ff4a7ee30ba6c18e25cc963 --license MIT \
-  --output "$CANDIDATE/payload.json"
-# Review payload.json, SHA/size/source/platforms and public-key fingerprint before this command.
-# Deliberate operator-only local signing; never run in CI, Docker, shell tracing or this agent task.
-npm run release -- sign --payload "$CANDIDATE/payload.json" \
-  --key /Users/me/.config/zdeck-signing/registry-O8fc8H/private-key.pem \
-  --key-id registry-2026-01 --output "$CANDIDATE/release.json"
-npm run release -- verify --record "$CANDIDATE/release.json" \
-  --trust registry/app-contract.json --archive "$CANDIDATE/home-assistant.zdx"
-```
-
-These commands refuse existing outputs. Do not change already-published bytes or reuse the exact
-version for changed source/archive facts. If review changes any archive byte, rebuild from the new
-committed source and review a new candidate/version as appropriate.
-
-After separate publication authorization: add the public envelope as
-`registry/releases/home-assistant/0.2.0.json`; update only `registry/plugins/home-assistant.json`
-with matching published version/source/licence/runtime/tested-platform labels/release reference.
-Keep `ready:false`. Stage the archive under an actual new absolute directory at
-`artifacts/home-assistant/0.2.0.zdx` (not a URL). Then on the controlled publication host:
-
-```sh
-npm test && npm run typecheck && npm run build
-npm run release -- retain --root "$PWD" \
-  --archives "${REVIEWED_ARCHIVES:?Absolute staging root containing home-assistant/0.2.0.zdx}" \
-  --output "$PWD/data"
-docker compose up --build -d
 npm run hosting:live -- --record registry/releases/home-assistant/0.2.0.json \
-  --archive "$REVIEWED_ARCHIVES/home-assistant/0.2.0.zdx"
+  --archive "$CANDIDATE/home-assistant.zdx"
+cd /Users/me/repos/personal/zdeck
+ZDECK_REVIEWED_RELEASE="$CANDIDATE/release.json" \
+ZDECK_ZDX_ARTIFACT="$CANDIDATE/home-assistant.zdx" ZDECK_PUBLIC_RELEASE=1 \
+  cargo test --locked --manifest-path src-tauri/Cargo.toml -p zdeck-plugin-host \
+  --test registry_release reviewed_production_release -- --ignored --nocapture
 ```
 
-`retain` publishes only verified absent bytes and preserves all historical records/archives; supply
-all history, not just this candidate. Signing does not authorize publication. A green hosting check
-does not enable the website: deliberately review/distribute the configured native builds and all
-three-OS gates, then change `ready:true` in a separate reviewed change. No automatic publishing,
-self-authorizing install links or GitHub PR/token writes were added.
+For real bundled WebKit/IPC delivery without changing the user's handler, build with
+`npm run tauri:build -- --debug --bundles app --features native-smoke --config src-tauri/tauri.smoke.conf.json`,
+then launch the smoke bundle executable with `ZDECK_REGISTRY_SMOKE=remote`. It creates its own new
+roots; its fixed native delivery hook requests only HA 0.2.0 and reports `ZDECK_REGISTRY_SMOKE`
+JSON (`ok` must be true). `local` additionally requires explicit `ZDECK_SMOKE_ARCHIVE`; `missing`
+expects the pre-deployment 404. This is not installed OS/browser association QA. Never launch the
+normal binary for isolation tests. Only after positive hosting, configured app distribution and
+applicable installed-handler/manual QA should a separate reviewed change activate `ready:true`.

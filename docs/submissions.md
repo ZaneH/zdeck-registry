@@ -76,8 +76,10 @@ Only after evidence is adequate use [releases.md](releases.md) to prepare the si
 review it, deliberately sign offline with an external key, and verify against independently
 reviewed public keys. Set matching catalogue facts and the signed record reference in a separate
 maintainer change. Manually retain/publish immutable JSON/ZIP and deploy under separate operator
-authorization. `ready:false` stays until configured app distribution and installed native QA on
-macOS, Windows and Linux pass. Community submission never auto-enables installation.
+authorization. `ready:false` stays until public exact-byte hosting, configured app distribution
+and installed native QA pass on every platform **claimed by the offered release**. A scoped pilot
+excludes and rejects unverified platforms; it does not claim or waive three-OS parity.
+Community submission never auto-enables installation.
 
 References: GitHub [manual workflows](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow),
 [artifact downloads](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts),

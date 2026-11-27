@@ -25,7 +25,12 @@ function fixture(hosted = false) {
 }
 describe("signed release tooling", () => {
   it("validates the entire checked-in catalogue, trust contract and historical release directory", () => {
-    expect(() => buildReleases(process.cwd())).not.toThrow();
+    const checked = buildReleases(process.cwd());
+    expect(checked.ready).toEqual([]);
+    const config = trust(JSON.parse(readFileSync("registry/app-contract.json", "utf8")));
+    const { release } = verifyEnvelope(compactJson(Buffer.from(checked.records.get("releases/home-assistant/0.2.0.json")!)), config);
+    expect(release.compatibility.platforms).toEqual(["macos"]);
+    expect(release.artifact.sha256).toBe("2bc4fde8f462feabbf91b929a9b5213eee63183972f34435b53485de225e979d");
   });
   it("rejects legacy catalogues, filename mismatches, malformed files and symlinked records", () => {
     const f = fixture(); try {
@@ -48,7 +53,7 @@ describe("signed release tooling", () => {
     expect(verified.release.id).toBe("fixture");
     expect(verified.release.source.repo).toBe("https://source.example.test/fixture-only");
   });
-  it("validates every envelope and emits exact immutable bytes, only gating genuine ready releases", () => {
+  it("validates every envelope and emits exact immutable bytes, only gating genuine ready platform-scoped releases", () => {
     const f = fixture(); try {
       expect(verifyEnvelope(f.envelope, f.config).release).toEqual(f.p);
       expect(buildReleases(f.root).ready).toEqual([]);

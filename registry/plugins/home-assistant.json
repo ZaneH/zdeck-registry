@@ -1,13 +1,16 @@
 {
   "id": "home-assistant",
-  "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/main/plugins/home-assistant" },
+  "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/c688567f8359f6d20ff4a7ee30ba6c18e25cc963/plugins/home-assistant" },
   "name": "Home Assistant",
-  "summary": "Local Home Assistant controls. In development; not published.",
+  "summary": "Signed macOS pilot for local Home Assistant controls. Desktop activation is pending deployment and handoff QA.",
+  "version": "0.2.0",
   "author": "zDeck",
   "license": "MIT",
   "repo": "https://github.com/ZaneH/zdeck",
-  "tags": ["smart-home", "in-development"],
+  "platforms": ["macOS"],
+  "runtime": { "language": "node", "minimum": "22.18.0" },
+  "tags": ["smart-home", "pilot"],
   "readme": "home-assistant.md",
-  "status": "in-development",
-  "release": null
+  "status": "published",
+  "release": { "record": "releases/home-assistant/0.2.0.json" }
 }

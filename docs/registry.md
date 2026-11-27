@@ -44,8 +44,8 @@ absent author means the registry does not assert who publishes the plugin.
   requires matching signed release metadata and the independent app-ready gate before installation
   can be offered.
 
-The checked-in Spotify entry is a `preview` of the existing reference plugin. The Home Assistant
-entry is an `in-development` placeholder. Neither is presented as installable.
+Spotify is a `preview` of the existing reference plugin. Home Assistant 0.2.0 is a signed
+macOS-only pilot staged for publication. Neither is offered for installation while `ready:false`.
 
 ## Release record and install gate
 
@@ -69,7 +69,9 @@ rotation/revocation and concrete isolated smoke. Nothing generates a production 
 `app-contract.json` is checked in **not ready**, with the owned public endpoint and reviewed
 public key; new desktop builds ship the independent matching trust root. `ready:true` is an
 explicit maintainer assertion that a matching configured desktop build and genuine immutable
-releases have been distributed and verified on all three OSes. Only a published record with a
+releases have been published and verified on **every OS claimed by each release**. A verified
+single-platform pilot is allowed; unclaimed OSes are explicitly rejected by the desktop resolver.
+This does not waive implementation or future verification requirements for all three OSes. Only a published record with a
 build-verified envelope and that active contract can offer an install action. A valid signed
 published record with `ready:false` remains unavailable; preview entries can never be activated
 by that flag. The browser receives only a build-generated allowlist of exact verified identities,

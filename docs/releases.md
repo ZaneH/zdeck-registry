@@ -1,10 +1,12 @@
 # Maintainer signed releases v1
 
-The public site `https://zreg.zaaane.com` is reachable; this is **not yet a published plugin
-release service**. `registry/app-contract.json` supplies that endpoint and public key
-`registry-2026-01` with **`ready:false`**. The independent desktop ships the same public trust root.
-Spotify/Home Assistant remain preview/in-development with `release:null`. No production private
-key was accessed. Do not enable links or invent platform evidence, review or signatures.
+The public site `https://zreg.zaaane.com` is reachable. Home Assistant 0.2.0 now has a genuine
+signed **macOS-only pilot** record and locally retained archive, but the public paths still return
+404 pending CT deployment. `registry/app-contract.json` keeps **`ready:false`**. The independent
+desktop ships the same endpoint/public trust root `registry-2026-01`. Spotify remains a preview.
+The operator-authorized signing CLI used the external private-key file locally; no key bytes were
+printed, copied, committed or deployed. Do not enable links before the applicable publication and
+native handoff checks.
 See the [first real HA candidate and exact next commands](home-assistant-candidate.md) and
 [per-plugin generated submissions](submissions.md).
 
@@ -68,7 +70,11 @@ The desktop never trusts keys fetched with a release.
 `registry/app-contract.json` is the website's **manual assertion that a distributed configured app
 is ready**, not the desktop trust root. It contains `{schema:1,ready:boolean,endpoint:string|null,
 keys:[{id,publicKey}]}` (at most eight unique IDs). Set the same reviewed endpoint/public keys here;
-only set `ready: true` after real publication and three-OS native QA. The website build verifies
+only set `ready: true` after real publication, configured app distribution and native QA for
+**every platform claimed by each offered release**. A macOS-only pilot need not wait for Windows
+and Linux QA, but those OSes must be excluded from its signed platforms and explicitly rejected
+by the desktop. All three platform implementations and their outstanding verification remain
+project requirements; pilot evidence is not parity. The website build verifies
 all release envelopes against those keys and cross-checks all published records before enabling an
 install link for that exact identity. A decorative signature cannot enable an entry. `ready:false`
 allows a genuinely signed published record to be listed while app activation is withheld.
@@ -143,8 +149,10 @@ metadata through a publishing API. It does not sign, configure desktop trust or 
    Common GitHub release links redirect and are not directly compatible. Preserve all historical
    JSON and archives across deployments; `wx` prevents local overwrite, not a hosting provider's
    overwrite or deletion. Review Git diffs/host retention to enforce immutability operationally.
-6. Distribute the configured desktop build and test installed handlers on macOS/Windows/Linux.
-   Only then deliberately set the website's app contract ready and promote by PR. No automatic
+6. Distribute the configured desktop build and test installed handlers on each platform claimed
+   by the release (closed/running/hidden, native review, cancel, local priority, no-replace).
+   Only then deliberately set the website's app contract ready and promote by PR. Other platforms
+   remain explicitly unavailable until separately verified releases; never infer three-OS parity. No automatic
    enablement, deployment, update check or replacement is provided.
 
 The desktop enforces normal TLS, no proxies/redirects, public DNS validation and pinned addresses,
@@ -174,7 +182,8 @@ The website has no lookup/download busy/cancel state: it only hands an untrusted
 those states live in the desktop Storybook. No page can detect a handler/install result reliably.
 Website Storybook includes explicit fictional AppReady/PublishedUnready/Preview handoffs, enabled
 only by a Storybook-only exact-identity allowlist. Never click those fixture OS links; they are
-rendering checks, not install evidence. The seed availability remains unchanged; the public app contract is configured but still not ready.
+rendering checks, not install evidence. The public app contract is configured but still not ready; current signed pilot evidence is
+recorded in [home-assistant-candidate.md](home-assistant-candidate.md).
 
 ### Historical checks executed for the initial tooling milestone
 

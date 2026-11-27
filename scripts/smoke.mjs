@@ -66,7 +66,9 @@ try {
   const homeInstall = page.getByRole("button", { name: "Install unavailable" });
   assert(await homeInstall.isDisabled(), "Unavailable install must be disabled.");
   await page.getByText("Desktop request").click();
-  await page.getByText("No request is available for this entry.").waitFor();
+  await page.getByText("zdeck://plugins/install?id=home-assistant&version=0.2.0", { exact: true }).waitFor();
+  assert(await page.locator('a[href^="zdeck://"]').count() === 0, "Staged pilot must not expose an active install link.");
+  await page.screenshot({ path: "/tmp/zdeck-registry-ha-pilot.png", fullPage: true });
 
   await page.getByRole("link", { name: "All plugins" }).click();
   await page.getByRole("link", { name: /Spotify/ }).click();

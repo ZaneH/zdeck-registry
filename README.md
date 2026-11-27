@@ -7,10 +7,14 @@ there are no accounts, ratings, reviews, download counts, or publishing API.
 **Prototype status.** Browse, search, filtering, detail pages, and README rendering work.
 Build-time signed release verification and external-key release tooling work; a deliberately
 configured zDeck desktop can verify/download into its reviewed disabled installer. The public
-endpoint/key are configured, but `ready:false` and no signed release is published by this change. Updates/settings are not website features. The two seed entries are honestly unpublished:
+endpoint/key are configured, but **`ready:false`** keeps install actions disabled. Updates/settings
+are not website features.
 
-- **Spotify** — the existing zDeck reference plugin, shown as a preview. No registry release is published.
-- **Home Assistant** — an in-development placeholder. No plugin release or runtime claim exists.
+- **Spotify** — the reference plugin remains a preview without a registry release.
+- **Home Assistant 0.2.0** — genuine signed **macOS-only pilot**, retained locally with exact-byte
+  verification and isolated native disabled-install evidence. Public JSON/ZIP deployment and
+  installed browser/OS association QA remain pending; Windows/Linux are explicitly rejected.
+  See [the current check record and deployment commands](docs/home-assistant-candidate.md).
 
 Nothing on this site installs code. The install control is disabled until a genuine prebuilt `.zdx`
 archive and a signed registry release record exist.
@@ -37,7 +41,7 @@ for the separate offline retention workflow, backups/permissions and public HTTP
 page/health and safe release-path 404s, not positive release serving or installed native handlers.
 `zdeck.zaaane.com` is the separate app website, not another required service. New desktop builds
 independently ship the public registry endpoint/key; custom trust still requires deliberate build
-overrides. Seeds remain non-installable and app-ready stays false. See the
+overrides. Install actions remain unavailable and app-ready stays false. See the
 [first real HA candidate, checks and remaining gates](docs/home-assistant-candidate.md).
 
 ## Local development
