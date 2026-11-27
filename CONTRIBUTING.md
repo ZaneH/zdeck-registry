@@ -41,6 +41,14 @@ plugin's existing README; do not fill in a second description or an access quest
 `name`, `summary`, and `author` are optional presentation metadata. The name defaults to the ID;
 an omitted summary or author is not displayed. Do not add a publisher identity that is not known.
 
+Categories reuse optional `tags`; there is no second classification form. Leave `provenance`
+omitted unless reviewed: unclassified entries appear under Community (not verified community
+authorship). Only registry maintainers classify Official, after checking zDeck maintenance against
+an explicit HTTPS `evidence` source; author strings, repository names and registry signatures do
+not establish it. This is neither endorsement nor security review. Optional counts require a
+real source and observation date; dates require source/release/Git evidence in the PR. Omit them
+when unknown—never fill in zero or today's date. See [snapshot meanings and date rules](docs/registry.md#snapshot-and-date-semantics).
+
 ## 3. Check locally
 
 ```sh

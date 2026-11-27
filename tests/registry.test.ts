@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import raw from "../registry/plugins.json";
+import { DEFAULT_DIRECTORY, selectPlugins } from "../src/lib/directory";
 import {
   canOfferInstall,
-  filterPlugins,
   installRequestUrl,
   parseRegistry,
   readmeFor,
@@ -187,15 +187,15 @@ describe("directory filtering", () => {
   const plugins: PluginRecord[] = result.registry.plugins;
 
   it("searches names, summaries, and tags without case sensitivity", () => {
-    expect(filterPlugins(plugins, "SPOTIFY").map((plugin) => plugin.id)).toEqual(["spotify"]);
-    expect(filterPlugins(plugins, "home").map((plugin) => plugin.id)).toEqual(["home-assistant"]);
-    expect(filterPlugins(plugins, "MEDIA").map((plugin) => plugin.id)).toEqual(["spotify"]);
-    expect(filterPlugins(plugins, "printer")).toEqual([]);
+    expect(selectPlugins(plugins, { ...DEFAULT_DIRECTORY, query: "SPOTIFY" }).map((plugin) => plugin.id)).toEqual(["spotify"]);
+    expect(selectPlugins(plugins, { ...DEFAULT_DIRECTORY, query: "home" }).map((plugin) => plugin.id)).toEqual(["home-assistant"]);
+    expect(selectPlugins(plugins, { ...DEFAULT_DIRECTORY, query: "MEDIA" }).map((plugin) => plugin.id)).toEqual(["spotify"]);
+    expect(selectPlugins(plugins, { ...DEFAULT_DIRECTORY, query: "printer" })).toEqual([]);
   });
 
   it("filters by tag and resets with the all tag", () => {
-    expect(filterPlugins(plugins, "", "smart-home").map((plugin) => plugin.id)).toEqual(["home-assistant"]);
-    expect(filterPlugins(plugins, "", "all")).toHaveLength(2);
+    expect(selectPlugins(plugins, { ...DEFAULT_DIRECTORY, categories: ["smart-home"] }).map((plugin) => plugin.id)).toEqual(["home-assistant"]);
+    expect(selectPlugins(plugins, DEFAULT_DIRECTORY)).toHaveLength(2);
     expect(tagsOf(plugins)).toEqual(["in-development", "macos", "media", "smart-home"]);
   });
 });

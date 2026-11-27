@@ -3,6 +3,7 @@
   "plugins": [
     {
       "id": "spotify",
+      "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/main/plugins/spotify" },
       "name": "Spotify",
       "summary": "Controls Spotify desktop on macOS through local Automation.",
       "version": "0.1.0",
@@ -18,6 +19,7 @@
     },
     {
       "id": "home-assistant",
+      "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/main/plugins/home-assistant" },
       "name": "Home Assistant",
       "summary": "Local Home Assistant controls. In development; not published.",
       "author": "zDeck",

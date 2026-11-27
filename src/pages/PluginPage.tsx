@@ -12,16 +12,17 @@ import {
 interface PluginPageProps {
   plugin: PluginRecord;
   readmes: Readonly<Record<string, string>>;
+  directoryHref?: string;
 }
 
-export function PluginPage({ plugin, readmes }: PluginPageProps) {
+export function PluginPage({ plugin, readmes, directoryHref = "#/" }: PluginPageProps) {
   const markdown = readmeFor(plugin, readmes);
   const request = installRequestUrl(plugin);
   const offered = canOfferInstall(plugin) && request !== null;
 
   return (
     <main className="page detail-page">
-      <a className="back-link" href="#/">
+      <a className="back-link" href={directoryHref}>
         <ArrowLeft size={15} aria-hidden="true" />
         All plugins
       </a>

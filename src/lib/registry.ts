@@ -9,7 +9,19 @@ export interface PluginRuntime {
 /** Local immutable signed envelope, verified by build tooling before publication. */
 export interface PluginRelease { record: string }
 
+export interface MetricSnapshot {
+  count: number;
+  asOf: string;
+  source: string;
+}
+
 export interface PluginRecord {
+  /** Operator-curated authorship, independent of release signatures. Omitted means unclassified. */
+  provenance?: { kind: "official" | "community"; evidence?: string };
+  downloads?: MetricSnapshot;
+  githubStars?: MetricSnapshot;
+  addedAt?: string;
+  updatedAt?: string;
   id: string;
   name: string;
   summary: string;
@@ -33,8 +45,6 @@ export interface Registry {
 export type ParseResult =
   | { ok: true; registry: Registry }
   | { ok: false; error: string };
-
-export const TAG_ALL = "all";
 
 const ID = /^[a-z][a-z0-9-]{0,63}$/;
 const VERSION = /^\d{1,4}\.\d{1,4}\.\d{1,4}$/;
@@ -68,11 +78,36 @@ function parseRelease(value: unknown): PluginRelease | null {
   return { record: value.record };
 }
 
+/** Only calendar dates or canonical UTC timestamps; Date.parse alone accepts impossible dates. */
+export function isRegistryDate(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}\.\d{3}Z)?$/.test(value)) return false;
+  const time = Date.parse(value);
+  return Number.isFinite(time) && new Date(time).toISOString() === (value.length === 10 ? `${value}T00:00:00.000Z` : value);
+}
+
+function isMetric(value: unknown): value is MetricSnapshot {
+  return isRecord(value) && exactKeys(value, ["count", "asOf", "source"])
+    && typeof value.count === "number" && Number.isSafeInteger(value.count) && value.count >= 0
+    && isRegistryDate(value.asOf) && httpsUrl(value.source);
+}
+
+function isProvenance(value: unknown): value is NonNullable<PluginRecord["provenance"]> {
+  return isRecord(value) && exactKeys(value, ["kind", "evidence"])
+    && (value.kind === "official" || value.kind === "community")
+    && (value.evidence === undefined ? value.kind !== "official" : httpsUrl(value.evidence));
+}
+
 function parsePlugin(value: unknown, availableReadmes: ReadonlySet<string>): PluginRecord | null {
   if (!isRecord(value) || !exactKeys(value, [
     "id", "name", "summary", "version", "author", "license", "repo", "platforms",
-    "runtime", "tags", "readme", "status", "release",
+    "runtime", "tags", "readme", "status", "release", "provenance",
+    "downloads", "githubStars", "addedAt", "updatedAt",
   ])) return null;
+  if ((value.provenance !== undefined && !isProvenance(value.provenance))
+    || (value.downloads !== undefined && !isMetric(value.downloads))
+    || (value.githubStars !== undefined && !isMetric(value.githubStars))
+    || (value.addedAt !== undefined && !isRegistryDate(value.addedAt))
+    || (value.updatedAt !== undefined && !isRegistryDate(value.updatedAt))) return null;
   if (typeof value.id !== "string" || !ID.test(value.id)
     || (value.name !== undefined && !text(value.name, 80))
     || (value.summary !== undefined && !text(value.summary, 200))
@@ -108,6 +143,11 @@ function parsePlugin(value: unknown, availableReadmes: ReadonlySet<string>): Plu
     ...(value.platforms === undefined ? {} : { platforms: value.platforms as string[] }),
     ...(runtime ? { runtime } : {}),
     ...(value.tags === undefined ? {} : { tags: value.tags as string[] }),
+    ...(value.provenance === undefined ? {} : { provenance: value.provenance as PluginRecord["provenance"] }),
+    ...(value.downloads === undefined ? {} : { downloads: value.downloads as MetricSnapshot }),
+    ...(value.githubStars === undefined ? {} : { githubStars: value.githubStars as MetricSnapshot }),
+    ...(value.addedAt === undefined ? {} : { addedAt: value.addedAt as string }),
+    ...(value.updatedAt === undefined ? {} : { updatedAt: value.updatedAt as string }),
     readme: value.readme as string, status, release,
   };
 }
@@ -155,16 +195,6 @@ export function statusNote(plugin: PluginRecord): string {
   if (plugin.status === "published") return canOfferInstall(plugin) ? "Published release. The desktop verifies it again before review." : "Published record; desktop release contract is not activated for this entry.";
   if (plugin.status === "preview") return "Reference plugin. No package is published for download.";
   return "Not published. Nothing to install yet.";
-}
-
-export function filterPlugins(plugins: PluginRecord[], query: string, tag = TAG_ALL): PluginRecord[] {
-  const needle = query.trim().toLocaleLowerCase();
-  return plugins.filter((plugin) => {
-    if (tag !== TAG_ALL && !plugin.tags?.includes(tag)) return false;
-    if (!needle) return true;
-    return [plugin.name, plugin.summary, ...(plugin.tags ?? [])]
-      .some((value) => value.toLocaleLowerCase().includes(needle));
-  });
 }
 
 export function tagsOf(plugins: PluginRecord[]): string[] {

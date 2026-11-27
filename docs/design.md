@@ -4,7 +4,8 @@
 
 A static, Git-backed directory for zDeck plugins. It should make a plugin's identity, licence,
 source, runtime, and honest availability obvious before anyone is asked to install anything. It is
-not a marketplace: no accounts, ratings, reviews, download counts, or publishing API.
+not a marketplace: no accounts, ratings, reviews, telemetry, or publishing API. Optional attributed
+metric snapshots can be shown; there is no live download counter or GitHub feed.
 
 ## North star
 
@@ -22,13 +23,20 @@ or in-development entry. No new brand palette.
 runtime constraints, and the future deep-link request. Type scale follows zDeck's compact 13px
 base with a restrained display size; no separate display face.
 
-**Layout.** A single left-aligned reading column, max ~1000px, with a header that mirrors zDeck's
-topbar instead of a marketing hero.
+**Layout.** A left-aligned directory, max ~1000px, with a header that mirrors zDeck's topbar instead
+of a marketing hero. The directory title is compact (26px); search is the main working surface.
+A 184px left filter rail stays sticky and scrolls within the viewport; the results column uses
+`minmax(0, 1fr)`. At narrow container widths the rail becomes an inline Filters disclosure with a
+selection count, keyboard checkboxes and Escape-to-trigger focus restoration. Search, result count
+and the adapted zDeck Dropdown sort/order controls align above dense package rows.
 
 ```
 ┌─ zDeck / Plugins ─────────────────────────────── prototype ┐
-│ Plugins for zDeck.                 [ search… ] [tags]      │
-│ Honest state line: 2 entries · 0 installable               │
+│ Plugins for zDeck.                                        │
+│ Filters       │ [ Search plugins…                       ] │
+│ □ Official    │ 2 entries / 0 installable  [Sort] [Order]  │
+│ □ Community  │ [key] Name · summary · state              │
+│ Categories    │       Downloads —  GitHub stars —          │
 ├─────────────────────────────────────────────────────────────┤
 │ [key] Spotify              0.1.0   Preview · no download →  │
 │ [key] Home Assistant              In development · no download
@@ -48,8 +56,9 @@ rows stack metadata below the title; the detail install panel follows the README
 - The install control is visibly unavailable until a genuine `.zdx` archive and signed registry
   record exist. Nothing on the page implies that clicking it installs code.
 - Metadata earns its space: source, licence, runtime, platform. Presentation extras are optional.
-- Tags and search are small, local, and keyboard-accessible. The empty result explains how to
-  clear the filter.
+- Tags and search are small, local, and keyboard-accessible. Exact/prefix/name relevance leads;
+  explicit sorts stay explicit. Missing metrics/dates remain unknown and sort last, not as zero.
+  The empty result explains how to clear criteria. Categories are tags, not duplicate metadata.
 - The README is content, not remote content: it comes from the registry checkout at build time and
   renders without raw HTML, remote images, iframes, or executable links.
 
@@ -62,8 +71,14 @@ rows stack metadata below the title; the detail install panel follows the README
 
 ## States to build and show in Storybook
 
-Directory default, filtered, no matches, narrow; detail preview, in-development/pending release;
-registry error; narrow detail. Stories use local fixtures only.
+Directory default, filtered, no matches, empty, narrow, long/unbroken names, relevance, both
+publisher groups, combined categories, metric/date sorts, unknown metrics, and the 500-record
+limit; detail preview, in-development/pending release; registry error; narrow detail. Stories use
+local fixtures only; synthetic counts, dates and publisher classifications have an explicit
+fictional banner and never enter the production catalogue.
+
+Directory behavior, reproducible browser checks, screenshots and bounded search timing evidence
+are recorded in [directory-checks.md](directory-checks.md).
 
 ## Inspiration observations (checked 2026-11-26)
 
@@ -77,8 +92,9 @@ registry error; narrow detail. Stories use local fixtures only.
   it shows a result count (“Showing results 1-38 of 38 packages”), sort control, and a left rail of
   facets: package sets, licences, maintainers, platforms, categories, and broken/deprecated status.
   Each result expands to show version, outputs, homepage, source, and licence. We borrow the dense
-  metadata and explicit status, but keep one local tag filter and no facet panel: the catalogue is
-  currently two entries, and facet chrome would be larger than the content.
+  metadata and explicit status. The original two-entry UI kept one local tag filter; the requested
+  directory revision now uses a compact left facet rail for publisher/category criteria, not the
+  full set of platform/licence/maintainer facets. No extra data collection is needed.
 - **Typst Universe submission** (disliked friction): the public submit URL we tried returned 404,
   so we read the repository guidance. A submission is a Git PR that copies the package into
   `packages/preview/{name}/{version}`; it requires a manifest plus README, a matching licence file,

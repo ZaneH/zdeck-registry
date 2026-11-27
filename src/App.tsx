@@ -3,6 +3,7 @@ import { BrandMark } from "./components/BrandMark";
 import { READMES, REGISTRY } from "./data/registry";
 import { DirectoryPage } from "./pages/DirectoryPage";
 import { PluginPage } from "./pages/PluginPage";
+import { directorySearch, parseDirectoryState } from "./lib/directory";
 
 export type Route =
   | { kind: "directory" }
@@ -10,7 +11,7 @@ export type Route =
   | { kind: "not-found" };
 
 export function parseRoute(hash: string): Route {
-  const value = hash.replace(/^#\/?/, "");
+  const value = hash.split("?")[0].replace(/^#\/?/, "");
   if (!value) return { kind: "directory" };
   const [section, id, ...rest] = value.split("/");
   if (section !== "plugin" || !id || rest.length > 0) return { kind: "not-found" };
@@ -46,10 +47,15 @@ export function RegistryErrorPage({ error }: { error: string }) {
 }
 
 export function App() {
-  const [route, setRoute] = useState<Route>(() => parseRoute(window.location.hash));
+  const [navigation, setNavigation] = useState(() => ({ hash: window.location.hash, revision: 0 }));
+  const { hash, revision } = navigation;
+  const route = parseRoute(hash);
+  const directoryState = parseDirectoryState(hash);
+  const directoryHref = `#/${directorySearch(directoryState)}`;
 
   useEffect(() => {
-    const onHashChange = () => setRoute(parseRoute(window.location.hash));
+    // Local query edits replace history without a hash event; even a return to the same root must reset the page.
+    const onHashChange = () => setNavigation((previous) => ({ hash: window.location.hash, revision: previous.revision + 1 }));
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
@@ -64,18 +70,19 @@ export function App() {
     } else {
       document.title = "Plugins · zDeck";
     }
-  }, [route]);
+  }, [navigation]);
 
   let content;
   if (!REGISTRY.ok) {
     content = <RegistryErrorPage error={REGISTRY.error} />;
   } else if (route.kind === "plugin") {
     const plugin = REGISTRY.registry.plugins.find((entry) => entry.id === route.id);
-    content = plugin ? <PluginPage plugin={plugin} readmes={READMES} /> : <NotFoundPage />;
+    content = plugin ? <PluginPage plugin={plugin} readmes={READMES} directoryHref={directoryHref} /> : <NotFoundPage />;
   } else if (route.kind === "not-found") {
     content = <NotFoundPage />;
   } else {
-    content = <DirectoryPage plugins={REGISTRY.registry.plugins} />;
+    content = <DirectoryPage key={revision} plugins={REGISTRY.registry.plugins} initialState={directoryState}
+      onStateChange={(state) => window.history.replaceState(null, "", `#/${directorySearch(state)}`)} />;
   }
 
   return (

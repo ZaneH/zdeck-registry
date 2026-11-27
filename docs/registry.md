@@ -24,7 +24,10 @@ URLs, and missing READMEs reject the catalogue; entries are never silently skipp
 | `repo` | yes | Absolute HTTPS source URL with no embedded credentials. |
 | `platforms` | no | 1–8 tested platform labels, such as `macOS` or `Linux`. Omit if untested. |
 | `runtime` | for published | `{ "language": "node" \| "python", "minimum": "x.y.z" }`. |
-| `tags` | no | Up to 8 unique lowercase tags, each 1–32 characters. Presentation and filtering only. |
+| `tags` | no | Up to 8 unique lowercase tags, each 1–32 characters. Also used as directory categories; no second category list. |
+| `provenance` | no | `{ "kind": "official" \| "community", "evidence"?: "https://…" }`. Official requires evidence; operator-reviewed classification, not a signature or inferred author identity. |
+| `downloads`, `githubStars` | no | Each is `{ "count": 0, "asOf": "2026-01-01", "source": "https://…" }`. Nonnegative safe integer and dated, attributable snapshot. Omit without evidence. |
+| `addedAt`, `updatedAt` | no | Valid calendar date `YYYY-MM-DD` or canonical UTC timestamp `YYYY-MM-DDTHH:mm:ss.sssZ`. No offsets, ambiguous local times, or rolled-over dates. |
 | `readme` | yes | Filename such as `spotify.md`; must exist under `registry/readmes/` and be ≤64 KiB. |
 | `status` | yes | `preview`, `in-development`, or `published`. |
 | `release` | yes | `null` for unpublished entries; a release object only for `published`. |
@@ -89,9 +92,52 @@ are rendered non-clickable rather than linked to registry routes. It drops image
 `javascript:`, protocol-relative, and backslash URLs; raw HTML and iframes are escaped or ignored.
 Tests cover hostile input in `tests/readme.test.tsx`.
 
-## Search and tags
+## Directory search, filters and ordering
 
-Search is local over name, summary, and tags. Tag filters come from the records themselves. The
-directory reports the total and filtered counts and an empty state with a clear-filters action.
-Unpublished entries remain in the catalogue and in search; they are not hidden to make the site
-look more complete.
+Search runs synchronously in memory over ID, name, summary and tags (at most 500 records). No
+submit, debounce delay, background request or README fetching. Every query word must match at
+least one field. Relevance ranks whole-query exact names/IDs, prefixes, contained name matches,
+all-name word matches, exact tags, then other matches; ties are alphabetical. The empty query is
+alphabetical. An explicitly chosen sort is not replaced when the query changes.
+
+Categories reuse `tags`. Selected categories match **any** selected tag; publisher choices match
+**any** selected group. Query, category and publisher filters combine with **AND**. No selected
+checkbox in a group means all. Missing `provenance` is grouped under **Community**, meaning
+“not classified Official,” not a verified claim about who wrote it. Official is an explicit
+registry-maintainer assertion of zDeck maintenance, supported by the evidence URL and review of
+the source. Neither a familiar author string, repository username, README claim, nor a valid
+release signature automatically makes a plugin Official. The two checked-in reference entries
+are explicitly classified from their plugin directories in the zDeck source tree; their preview /
+in-development availability remains unchanged. Official does not mean security-reviewed, a
+Spotify/Home Assistant endorsement, or installable.
+
+Sorts: relevance, name, downloads, GitHub stars, last updated, date added. Every sort offers both
+directions with contextual labels. Missing metrics/dates sort **last in both directions**, not as
+zero. Metric/date ties use ascending English locale-aware names, then exact IDs. Name sorting
+uses the same collator (including numeric names), with ID ties independent of direction.
+Query, checkbox selections, sort and direction live in hash query parameters, are replaced rather
+than adding a history entry per keystroke, and travel with detail/back links. Reload and browser
+Back restore the same criteria. Unpublished entries remain visible in search.
+
+### Snapshot and date semantics
+
+There is **no download counter or GitHub snapshot feed** in this registry. The real entries have
+no counts or dates and display `—`, never fabricated zeroes. The website does not count clicks,
+phone home, poll GitHub, or fetch metrics while searching. Storybook values are explicitly
+fictional fixtures and never imported by the production app.
+
+An operator may manually add an optional snapshot in a reviewed Git change, with an attributable
+HTTPS `source` and `asOf` observation date/time. `downloads` means the cumulative number of
+successful prebuilt `.zdx` archive downloads for this plugin across versions, as reported by that
+source—not installs, unique users, page views, source ZIP downloads, or inferred popularity. Omit
+it if the host does not provide that measure. `githubStars` means the source repository's star
+count at observation time; a monorepo count is repository-wide, not plugin-specific. Do not use a
+monorepo count as a plugin popularity claim. Each metric has its own source and observation date;
+hovering a known row count exposes these. Unknown and actual zero stay distinct.
+
+`addedAt` is the first inclusion of this ID in this catalogue. `updatedAt` is a substantive plugin
+source/release update, not a registry edit, snapshot refresh, or build timestamp. Supply either
+only with traceable source/release/Git-history evidence in the PR. They are independent dates,
+not a claim that the plugin was created on that day. The checked-in seeds deliberately omit both;
+we do not infer plugin-update history from registry Git history. Changing presentation metadata
+does not affect signed release payloads or the app-ready install gate.
