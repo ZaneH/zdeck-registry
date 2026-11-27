@@ -114,9 +114,11 @@ configure/distribute the desktop's public endpoint and reviewed public keys as d
 [releases.md](releases.md). Never fetch trust keys from the same server to bootstrap trust. No
 runtime custom-registry UI is implemented here. HA 0.2.0 has a genuine signed macOS pilot record,
 publicly hosted bytes and a public-only deploy bundle; Spotify 0.1.0 has a genuine signed macOS
-pilot record and a retained public-only deploy bundle whose deployment, public serving and native
-checks are still pending. `app-contract.json` is active per exact macOS identity after public
-serving and installed-handler QA; see [the HA check record](home-assistant-candidate.md) and
+pilot record whose exact public bytes are hosted and verified, with isolated native install passed
+and normal-GUI inspection still open. The live site still serves the earlier HA-only build; the
+reviewed new build's two install links are activated by the next deployment.
+`app-contract.json` is active per exact macOS identity; see
+[the HA check record](home-assistant-candidate.md) and
 [the Spotify pilot record](spotify-candidate.md).
 
 ## Existing Cloudflare Tunnel on the CT

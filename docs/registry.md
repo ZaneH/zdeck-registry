@@ -46,10 +46,12 @@ absent author means the registry does not assert who publishes the plugin.
 
 Home Assistant 0.2.0 is a published signed macOS-only pilot whose public release and
 installed-handler QA were verified; with `ready:true` the site offers its exact install request.
-Spotify 0.1.0 is now a published signed macOS-only pilot too: its envelope was locally verified and
-its public bytes are retained, but **public serving and installed-handler QA are still pending** the
-catalogue deployment. Its install request therefore becomes reachable with that deployment and must
-not be described as install-verified before those checks. No other entry is activated.
+Spotify 0.1.0 is now a published signed macOS-only pilot too: its envelope and archive are locally
+verified and publicly served as the exact signed bytes, and isolated native install (disabled,
+untrusted, restart, collision refusal) passed. The reviewed new build renders both install links,
+but the live site still serves the previous HA-only build until activation, so do not claim the
+live Spotify link is active. The normal app's identity prompt was only observed to render, not
+inspected; no real Spotify action was tested. No other entry is activated.
 
 ## Release record and install gate
 

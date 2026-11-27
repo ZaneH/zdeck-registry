@@ -12,9 +12,9 @@ only after operator-verified public serving and installed-build QA:
 - An earlier automated lookup anomaly was not reproduced across 12 s of passive screenshots and
   read-only accessibility inspection; its cause is still unexplained and it is not called disproven.
 - Signed platforms stay `["macos"]`. Windows/Linux were not natively verified and this release does
-  not support them. Spotify 0.1.0 is now separately catalogued as a signed macOS pilot whose
-  deployment, public serving and native checks are pending; see
-  [spotify-candidate.md](spotify-candidate.md).
+  not support them. Spotify 0.1.0 is separately catalogued as a signed macOS pilot with hosted
+  exact bytes and a passed isolated native install; its normal-GUI check and site activation were
+  still open at this record's last update. See [spotify-candidate.md](spotify-candidate.md).
 
 The historical sections below record the earlier deployment-blocked state: the then-current 404
 snapshots and the retention/deploy procedure. Their dated observations are superseded by the

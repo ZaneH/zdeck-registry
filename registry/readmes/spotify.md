@@ -4,7 +4,7 @@ This MIT-licensed reference plugin controls Spotify desktop on macOS through loc
 
 ## Signed macOS pilot 0.1.0
 
-The 0.1.0 `.zdx` archive is prebuilt and signed (`registry-2026-11`), and its signature, archive digest and source commit were verified locally. Its signed platforms are **macOS only**; Windows and Linux are rejected by the desktop before any download. Public serving of the record and archive, and native installed-handler installation, are **pending** until this release is deployed and separately checked. No desktop install of this packaged archive has been tested yet, and no playback or Automation session has been verified. The local folder workflow below is independent of that pending check.
+The 0.1.0 `.zdx` archive is prebuilt and signed (`registry-2026-11`); its signature, archive digest and source commit were verified, and its record and archive are publicly served as the exact signed bytes. Its signed platforms are **macOS only**; Windows and Linux are rejected by the desktop before any download. An isolated native check downloaded, reviewed and installed this packaged archive disabled/untrusted and refused a collision. The updated normal app was launched with the Spotify install request, but its identity prompt was not visually confirmed and **no real playback, JXA or Automation action has been tested**; the previously enabled Spotify plugin was left unchanged. The local folder workflow below is independent of those checks.
 
 ## Develop from this repository
 

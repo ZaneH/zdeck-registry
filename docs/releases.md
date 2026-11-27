@@ -8,11 +8,13 @@ public trust roots `registry-2026-01` (historical) and `registry-2026-11` (prepa
 identity, which currently means the HA 0.2.0 pilot and the newly catalogued Spotify 0.1.0 pilot.
 
 Spotify 0.1.0 is signed with `registry-2026-11`, locally verified against this trust file and now
-has a published catalogue record and envelope, **but it is not deployed**: public serving and
-native installed-handler QA are pending. Because the gate is per identity, deploying the catalogue
-is what activates the Spotify install request; the reviewed bytes must be retained **and** the
-follow-up public/native checks completed at the same time. Until then, do not describe Spotify as
-publicly available or install-verified in any other material.
+has a published catalogue record and envelope. Its exact 716-byte record and 42,176-byte archive
+are hosted and verified (`200`, correct MIME, immutable hashes). Independent public-verifier and
+isolated native smoke runs downloaded, reviewed and installed it disabled/untrusted, including
+restart and collision refusal. The updated normal app rendered its identity prompt, but that
+prompt was not inspected and no real playback/JXA/Automation action was tested. **The live site
+still serves the previous HA-only build**; the reviewed new build renders two install links, and
+activating it is the next deployment. Do not claim the live Spotify link is already active.
 The operator-authorized signing CLI used the external private-key file locally; no key bytes were
 printed, copied, committed or deployed.
 See the [HA pilot record](home-assistant-candidate.md), the

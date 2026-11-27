@@ -14,11 +14,13 @@ build-verified published identity. Updates/settings are not website features.
   with installed-handler macOS QA on the reviewed pilot build. Windows/Linux are explicitly
   rejected by the desktop resolver and remain unverified.
   See [the current check record and remaining gaps](docs/home-assistant-candidate.md).
-- **Spotify 0.1.0** — genuine signed **macOS-only pilot**, locally verified, catalogued and retained
-  but **not deployed**: public serving and native installed-handler QA are pending, so its install
-  request only becomes reachable with the reviewed deployment. Windows/Linux are explicitly
-  rejected. Neither the native install nor Spotify playback has been tested.
-  See [the Spotify pilot record and rollout](docs/spotify-candidate.md).
+- **Spotify 0.1.0** — genuine signed **macOS-only pilot**. Its exact record and archive are publicly
+  served and verified, and isolated native install (disabled, untrusted, restart, collision refusal)
+  passed. The updated normal app rendered the identity prompt but it was not inspected, and **no
+  real Spotify playback or Automation action was tested**. The live site still serves the previous
+  HA-only build; activation next makes the new build's two install links reachable. Windows/Linux
+  are explicitly rejected.
+  See [the Spotify pilot record and activation](docs/spotify-candidate.md).
 
 Nothing on this site installs code. The install control is an untrusted request, offered only for
 a genuine prebuilt `.zdx` archive and a build-verified signed release record on its claimed
@@ -46,10 +48,10 @@ for the separate offline retention workflow, backups/permissions and public HTTP
 positive exact release/archive serving. Installed native macOS handler QA was performed separately,
 not by the website. `zdeck.zaaane.com` is the separate app website, not another required service.
 New desktop builds independently ship the public registry endpoint/key; custom trust still requires
-deliberate build overrides. Only the two verified macOS pilot identities offer an install action
-once deployed; Spotify's public/native checks remain pending that deployment. See the
+deliberate build overrides. The reviewed build offers install actions for exactly two macOS pilot
+identities once activated; the live site is the earlier HA-only build. See the
 [HA pilot checks and remaining gaps](docs/home-assistant-candidate.md) and the
-[Spotify pilot record](docs/spotify-candidate.md).
+[Spotify pilot record and activation](docs/spotify-candidate.md).
 
 ## Local development
 

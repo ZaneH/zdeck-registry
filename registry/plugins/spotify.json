@@ -2,7 +2,7 @@
   "id": "spotify",
   "provenance": { "kind": "official", "evidence": "https://github.com/ZaneH/zdeck/tree/c688567f8359f6d20ff4a7ee30ba6c18e25cc963/plugins/spotify" },
   "name": "Spotify",
-  "summary": "Signed macOS pilot for local Spotify controls. Public serving and native install QA are pending; this release does not support Windows or Linux.",
+  "summary": "Signed macOS pilot for local Spotify controls. Public bytes and isolated native install verified; normal-GUI identity and live Spotify actions are unverified. macOS only.",
   "version": "0.1.0",
   "author": "zDeck",
   "license": "MIT",
