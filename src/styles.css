@@ -150,6 +150,9 @@ code {
 
 /* Header mirrors zDeck's compact topbar. */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
 }
@@ -183,17 +186,8 @@ code {
   font-weight: 420;
 }
 
-.header-note {
-  margin-left: auto;
-  padding: 3px 7px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-faint);
-  font-family: var(--mono);
-  font-size: 10.5px;
-}
-
 .header-link {
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   min-height: 34px;
@@ -927,10 +921,6 @@ h1 {
   .site-header-inner {
     gap: 9px;
     padding: 8px 16px;
-  }
-
-  .header-note {
-    display: none;
   }
 
   .page {

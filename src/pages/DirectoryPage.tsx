@@ -45,7 +45,6 @@ export function DirectoryPage({ plugins, initialState, onStateChange }: Director
       <header className="directory-intro">
         <h1>Plugins for zDeck.</h1>
         <p>Find actions for your deck. Review the source and permissions before installing.</p>
-        <p className="directory-notice">Prototype registry. Packages and desktop installation are not available yet.</p>
       </header>
 
       <div className="directory-layout">

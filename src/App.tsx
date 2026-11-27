@@ -93,7 +93,6 @@ export function App() {
             <BrandMark />
             <span>zDeck <span className="brand-sub">Plugins</span></span>
           </a>
-          <span className="header-note">prototype</span>
           <a className="header-link" href="https://github.com/ZaneH/zdeck" target="_blank" rel="noopener noreferrer">
             About zDeck
           </a>
