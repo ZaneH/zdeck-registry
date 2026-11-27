@@ -3,8 +3,10 @@
 The public site `https://zreg.zaaane.com` is reachable. Home Assistant 0.2.0 has a genuine signed
 **macOS-only pilot** record and publicly hosted archive; exact-byte public serving and
 installed-handler macOS QA were verified, so `registry/app-contract.json` is **`ready:true`** for
-exactly that identity. The independent desktop ships the same endpoint/public trust root
-`registry-2026-01`. Spotify remains a preview with no release and is never activated. The
+exactly that identity. The independent desktop ships the same endpoint and public trust roots
+`registry-2026-01` (historical) and `registry-2026-11` (prepared rotation). A Spotify 0.1.0
+candidate envelope has been signed with the new root and locally verified against this trust
+file, but it is not published, catalogued or activated; Spotify remains a preview. The
 operator-authorized signing CLI used the external private-key file locally; no key bytes were
 printed, copied, committed or deployed. Do not enable any further link before the applicable
 publication and native handoff checks.
@@ -81,7 +83,9 @@ install link for that exact identity. A decorative signature cannot enable an en
 allows a genuinely signed published record to be listed while app activation is withheld.
 
 Rotation: distribute a new app trusting old+new public IDs first, then sign new exact versions with
-the new key. Remove an ID in a future desktop build to manually revoke it. Older/offline apps and
+the new key. This trust file now carries both IDs, with `registry-2026-01` retained for historical
+records; no new record is published under `registry-2026-11` yet. Remove an ID in a future desktop
+build to manually revoke it. Older/offline apps and
 already installed packages are not remotely revoked. No expiry/online revocation/PKI/transparency
 log is supplied. Never rewrite existing release bytes to re-sign them; publish a new version.
 Removing a website verification key intentionally makes builds fail for **all historical records**
