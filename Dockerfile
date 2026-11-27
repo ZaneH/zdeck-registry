@@ -1,8 +1,10 @@
 # Multi-architecture upstream images; deliberately no platform override.
 FROM node:22.18.0-alpine3.22 AS build
 WORKDIR /app
+# Standard-library archive/submission and hosting checks; build stage only.
+RUN apk add --no-cache python3
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm ci --ignore-scripts --no-audit --no-fund
 COPY . .
 # Includes whole-catalogue, README and signed-history validation. No plugin code runs.
 RUN npm test && npm run build

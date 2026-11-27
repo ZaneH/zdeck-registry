@@ -1,4 +1,7 @@
-# Contributing a plugin
+# Contributing
+
+For a prepared archive, use the [generated submission bundle / GitHub intake workflow](docs/submissions.md)
+instead of hand-copying manifest metadata. Each plugin has its own record; no shared list edit. a plugin
 
 The registry is a small JSON file plus README files, reviewed as a pull request. Reuse the
 plugin's existing README; do not fill in a second description or an access questionnaire.
