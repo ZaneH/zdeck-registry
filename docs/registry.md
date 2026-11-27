@@ -39,50 +39,45 @@ absent author means the registry does not assert who publishes the plugin.
 - `preview` means an implementation exists, but no package is published for download.
 - `in-development` means the work is announced but no verified plugin, runtime, or archive is
   available.
-- Only `published` may carry `release`, `version`, and `runtime`, and the install request is still
-  disabled until the desktop verifies signed releases.
+- Only `published` may carry `release`. Version/runtime may describe a preview, but publication
+  requires matching signed release metadata and the independent app-ready gate before installation
+  can be offered.
 
 The checked-in Spotify entry is a `preview` of the existing reference plugin. The Home Assistant
 entry is an `in-development` placeholder. Neither is presented as installable.
 
-## Release record
+## Release record and install gate
+
+Published catalogue entries reference the exact local signed envelope:
 
 ```json
-{
-  "release": {
-    "url": "https://example.com/plugin-0.1.0.zdx",
-    "sha256": "64 lowercase hex characters",
-    "signature": { "keyId": "publisher-key", "value": "opaque encoded signature" }
-  }
-}
+{ "release": { "record": "releases/<id>/<version>.json" } }
 ```
 
-- The URL must be HTTPS and end in `.zdx`.
-- `.zdx` is an ordinary ZIP archive, not a new executable format.
-- The archive is prebuilt and self-contained: it includes everything needed at runtime and no
-  install scripts, package-manager hooks, or download-on-first-run behavior.
-- `sha256` is the digest of the exact archive served at that URL.
-- `signature` is optional today and validated for shape only. It is **not verified** by this site,
-  and its presence must not be read as a verified-release badge. A future signed release record
-  will need a documented algorithm, key distribution, and verification path.
+The path must equal that record's ID/version. The previous decorative `{url,sha256,signature}`
+shape is rejected. Every envelope under `registry/releases/` (including historical versions) is
+verified at build time with the reviewed public keys in `registry/app-contract.json`; catalogue
+version/source/licence/runtime/platform facts must match. Platforms of published records use
+`macOS`, `Windows`, `Linux`, corresponding to signed `macos`, `windows`, `linux`. Unknown keys,
+missing records and any signature/schema mismatch reject the entire build.
 
-Nothing in this repository creates signing keys or claims a release was signed.
+See [releases.md](releases.md) for Ed25519 domain-separated exact bytes, strict payload fields,
+external-key tooling, immutable static output and hosting, independent desktop trust distribution,
+rotation/revocation and concrete isolated smoke. Nothing generates a production signing key.
 
-## Install request
+`app-contract.json` is checked in **not ready**, with no endpoint/public keys. `ready:true` is an
+explicit maintainer assertion that a matching configured desktop build and genuine immutable
+releases have been distributed and verified on all three OSes. Only a published record with a
+build-verified envelope and that active contract can offer an install action. A valid signed
+published record with `ready:false` remains unavailable; preview entries can never be activated
+by that flag. The browser receives only a build-generated allowlist of exact verified identities,
+not private keys or Node crypto tooling.
 
-The future website-to-app request is:
-
-```text
-zdeck://plugins/install?id=spotify&version=0.1.0
-```
-
-- The id and version are URL-encoded.
-- It is an **untrusted request** for the desktop to show a confirmation flow. Opening the link must
-  not download, extract, or execute anything by itself.
-- `INSTALL_REQUESTS_ENABLED` is `false` in `src/lib/registry.ts`, so the UI renders a disabled
-  install control even if a record is published. This keeps the prototype from implying that a
-  deep-link handler or signed installer exists.
-- The desktop handoff contract is in [desktop-handoff.md](desktop-handoff.md).
+The link remains `zdeck://plugins/install?id=<encoded-id>&version=<encoded-exact-version>`.
+It is an **untrusted identity request**, not execution or a download. The desktop shows separate
+lookup, download and archive-install intent steps and independently re-verifies everything.
+The website does not fetch/install archives, detect an OS handler or claim an installation result.
+See [desktop-handoff.md](desktop-handoff.md).
 
 ## README rendering
 

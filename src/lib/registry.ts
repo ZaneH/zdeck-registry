@@ -6,12 +6,8 @@ export interface PluginRuntime {
   minimum: string;
 }
 
-/** A future signed archive record. This site does not verify signatures yet. */
-export interface PluginRelease {
-  url: string;
-  sha256: string;
-  signature?: { keyId: string; value: string };
-}
+/** Local immutable signed envelope, verified by build tooling before publication. */
+export interface PluginRelease { record: string }
 
 export interface PluginRecord {
   id: string;
@@ -42,7 +38,6 @@ export const TAG_ALL = "all";
 
 const ID = /^[a-z][a-z0-9-]{0,63}$/;
 const VERSION = /^\d{1,4}\.\d{1,4}\.\d{1,4}$/;
-const SHA256 = /^[a-f0-9]{64}$/;
 const README = /^[a-z0-9][a-z0-9-]{0,63}\.md$/;
 const STATUSES: PluginStatus[] = ["preview", "in-development", "published"];
 const RUNTIMES: RuntimeLanguage[] = ["node", "python"];
@@ -68,14 +63,9 @@ function parseRuntime(value: unknown): PluginRuntime | null {
 }
 
 function parseRelease(value: unknown): PluginRelease | null {
-  if (!isRecord(value) || !exactKeys(value, ["url", "sha256", "signature"])
-    || !httpsUrl(value.url, ".zdx") || typeof value.sha256 !== "string" || !SHA256.test(value.sha256)) return null;
-  if (!Object.hasOwn(value, "signature")) return { url: value.url as string, sha256: value.sha256 };
-  const signature = value.signature;
-  if (!isRecord(signature) || !exactKeys(signature, ["keyId", "value"])
-    || typeof signature.keyId !== "string" || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(signature.keyId)
-    || typeof signature.value !== "string" || !/^[A-Za-z0-9+/=_-]{32,512}$/.test(signature.value)) return null;
-  return { url: value.url as string, sha256: value.sha256, signature: { keyId: signature.keyId, value: signature.value } };
+  if (!isRecord(value) || !exactKeys(value, ["record"]) || typeof value.record !== "string"
+    || !/^releases\/[a-z][a-z0-9-]{0,63}\/\d{1,4}\.\d{1,4}\.\d{1,4}\.json$/.test(value.record)) return null;
+  return { record: value.record };
 }
 
 function parsePlugin(value: unknown, availableReadmes: ReadonlySet<string>): PluginRecord | null {
@@ -105,7 +95,7 @@ function parsePlugin(value: unknown, availableReadmes: ReadonlySet<string>): Plu
   const status = value.status as PluginStatus;
   const version = value.version as string | undefined;
   // Only a published record can carry an archive; the seeds stay honestly unpublished.
-  if (status === "published" && (!release || !version || !runtime)) return null;
+  if (status === "published" && (!release || !version || !runtime || release.record !== `releases/${value.id}/${version}.json`)) return null;
   if (status !== "published" && release) return null;
 
   return {
@@ -143,7 +133,8 @@ export function parseRegistry(value: unknown, availableReadmes: ReadonlySet<stri
  * The install deep link is a request for the desktop app to show a confirmation flow.
  * It does not install anything by itself, and this site disables it until signed releases exist.
  */
-export const INSTALL_REQUESTS_ENABLED = false;
+declare const __ZDECK_APP_READY_RELEASES__: readonly string[];
+const APP_READY_RELEASES: readonly string[] = typeof __ZDECK_APP_READY_RELEASES__ === "undefined" ? [] : __ZDECK_APP_READY_RELEASES__;
 
 export function installRequestUrl(plugin: PluginRecord): string | null {
   if (plugin.status !== "published" || !plugin.version || !plugin.release || !plugin.runtime) return null;
@@ -151,8 +142,8 @@ export function installRequestUrl(plugin: PluginRecord): string | null {
   return `zdeck://plugins/install?${query.toString()}`;
 }
 
-export const canOfferInstall = (plugin: PluginRecord) =>
-  INSTALL_REQUESTS_ENABLED && !!plugin.release?.signature && installRequestUrl(plugin) !== null;
+export const canOfferInstall = (plugin: PluginRecord, ready: readonly string[] = APP_READY_RELEASES) =>
+  ready.includes(`${plugin.id}@${plugin.version}`) && installRequestUrl(plugin) !== null;
 
 export function statusLabel(plugin: PluginRecord): string {
   if (plugin.status === "published") return "Published";
@@ -161,7 +152,7 @@ export function statusLabel(plugin: PluginRecord): string {
 }
 
 export function statusNote(plugin: PluginRecord): string {
-  if (plugin.status === "published") return "Release metadata present; install requests are still disabled.";
+  if (plugin.status === "published") return canOfferInstall(plugin) ? "Published release. The desktop verifies it again before review." : "Published record; desktop release contract is not activated for this entry.";
   if (plugin.status === "preview") return "Reference plugin. No package is published for download.";
   return "Not published. Nothing to install yet.";
 }

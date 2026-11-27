@@ -5,10 +5,11 @@ lives, what runtime it needs, and whether it can actually be installed. It is no
 there are no accounts, ratings, reviews, download counts, or publishing API.
 
 **Prototype status.** Browse, search, filtering, detail pages, and README rendering work.
-Downloads, desktop installation, signed release verification, update checks, and plugin settings
-are **not implemented**. The two seed entries are honestly unpublished:
+Build-time signed release verification and external-key release tooling work; a deliberately
+configured zDeck desktop can verify/download into its reviewed disabled installer. No production
+endpoint/public keys/releases are configured here. Updates/settings are not website features. The two seed entries are honestly unpublished:
 
-- **Spotify** — the existing zDeck reference plugin, shown as a preview. No `.zdx` archive exists.
+- **Spotify** — the existing zDeck reference plugin, shown as a preview. No registry release is published.
 - **Home Assistant** — an in-development placeholder. No plugin release or runtime claim exists.
 
 Nothing on this site installs code. The install control is disabled until a genuine prebuilt `.zdx`
@@ -43,13 +44,15 @@ safe README behavior, no external requests, and a narrow viewport. It saves a sc
    licence, licence file, and the runtime/platform details needed to install honestly.
 3. Build a prebuilt, self-contained `.zdx` archive and record its HTTPS URL and SHA-256. `.zdx` is
    an ordinary ZIP; it must contain no install scripts and must run without installing dependencies.
-4. For a real release, set `"status": "published"` and add the `release` object. Until then use
-   `"preview"` or `"in-development"` with `"release": null`.
+4. For a real release, follow [the external-key maintainer path](docs/releases.md), add its verified
+   immutable envelope and `release.record`, and set `"status": "published"`. Activation additionally
+   needs a reviewed app-ready contract. Until then use `"preview"` or `"in-development"` with
+   `"release": null`.
 
 Required fields are `id`, `license`, `repo`, `readme`, `status`, and `release`. `name`, `summary`,
 and `author` are optional presentation metadata: `name` defaults to the ID, and an omitted summary
 or author is not shown. `version`, `platforms`, `runtime`, and `tags` are optional unless a record is
-published; then version, runtime, and release are required. There is no access questionnaire:
+published; then version, runtime, platforms, and a matching signed release record are required. There is no access questionnaire:
 declare only runtime/security facts the user needs before installing, not optional presentation
 extras.
 
@@ -63,12 +66,13 @@ The complete schema, validation rules, archive contract, and signing plan are in
 - Registry records are validated as a whole. A malformed record fails the build/tests; no partial
   catalogue is served.
 - CI never runs third-party plugin code and has read-only repository permissions.
-- A `zdeck://plugins/install…` link is a request for a future desktop confirmation flow. It is not
-  execution, and this prototype never renders it as an active install action.
+- A `zdeck://plugins/install…` link is an untrusted request for desktop confirmation, not execution.
+  Only an app-ready build-verified published record can offer it; seed previews remain disabled.
 
 ## Documents
 
 - [Registry schema and install contract](docs/registry.md)
+- [Signed releases: tooling, trust bootstrap, immutable hosting and smoke](docs/releases.md)
 - [Desktop handoff: installs, updates, settings](docs/desktop-handoff.md)
 - [Design notes and reference observations](docs/design.md)
 - [Agent guide](AGENTS.md)

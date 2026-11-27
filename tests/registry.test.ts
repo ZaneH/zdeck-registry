@@ -29,10 +29,7 @@ function expectRejected(plugin: Record<string, unknown>) {
 function published(): Record<string, unknown> {
   const plugin = validPlugin();
   plugin.status = "published";
-  plugin.release = {
-    url: "https://example.com/spotify-0.1.0.zdx",
-    sha256: "a".repeat(64),
-  };
+  plugin.release = { record: "releases/spotify/0.1.0.json" };
   return plugin;
 }
 
@@ -74,26 +71,10 @@ describe("registry validation", () => {
     expectRejected(plugin);
   });
 
-  it("rejects a non-HTTPS or non-zdx archive", () => {
-    const insecure = published();
-    (insecure.release as Record<string, unknown>).url = "http://example.com/spotify.zdx";
-    expectRejected(insecure);
-
-    const wrongExtension = published();
-    (wrongExtension.release as Record<string, unknown>).url = "https://example.com/spotify.zip";
-    expectRejected(wrongExtension);
-  });
-
-  it("rejects a malformed checksum", () => {
-    const plugin = published();
-    (plugin.release as Record<string, unknown>).sha256 = "abc";
-    expectRejected(plugin);
-  });
-
-  it("accepts an optional signature on a release", () => {
-    const plugin = published();
-    (plugin.release as Record<string, unknown>).signature = { keyId: "zdeck-2026", value: "A".repeat(64) };
-    expect(parsePlugin(plugin).ok).toBe(true);
+  it("rejects remote, mismatched and legacy decorative release records", () => {
+    for (const release of [{ record: "https://example.com/a.json" }, { record: "../releases/spotify/0.1.0.json" }, { record: "releases/other/0.1.0.json" }, { record: "releases/spotify/0.2.0.json" }, { url: "https://example.com/a.zdx", sha256: "a".repeat(64), signature: { keyId: "decorative", value: "A".repeat(64) } }]) {
+      expectRejected({ ...published(), release });
+    }
   });
 
   it("requires a version, runtime, and archive for a published record", () => {
@@ -179,11 +160,14 @@ describe("install requests", () => {
     expect(canOfferInstall(plugin)).toBe(false);
   });
 
-  it("does not offer an install for an unsigned release", () => {
+  it("offers only a build-verified release explicitly marked app-ready", () => {
     const result = parsePlugin(published());
     if (!result.ok) throw new Error(result.error);
-    expect(result.registry.plugins[0].release?.signature).toBeUndefined();
-    expect(canOfferInstall(result.registry.plugins[0])).toBe(false);
+    const plugin = result.registry.plugins[0];
+    expect(canOfferInstall(plugin, [])).toBe(false);
+    expect(canOfferInstall(plugin, ["spotify@0.2.0"])).toBe(false);
+    expect(canOfferInstall(plugin, ["spotify@0.1.0"])).toBe(true);
+    expect(canOfferInstall({ ...plugin, status: "preview", release: null }, ["spotify@0.1.0"])).toBe(false);
   });
 });
 

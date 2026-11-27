@@ -1,0 +1,20 @@
+{
+  "notice": "NONPRODUCTION public-only interoperability fixture. Private key discarded; no artifact exists.",
+  "trust": {
+    "schema": 1,
+    "ready": false,
+    "endpoint": "https://registry.example.test/",
+    "keys": [
+      {
+        "id": "fixture-only",
+        "publicKey": "GLDpqs1n+WSGxnROj5DRkXpHy+8i+AVCxcYBqXK/b3U="
+      }
+    ]
+  },
+  "envelope": {
+    "schema": 1,
+    "keyId": "fixture-only",
+    "payload": "eyJzY2hlbWEiOjEsImlkIjoiZml4dHVyZSIsInZlcnNpb24iOiIxLjIuMyIsImFydGlmYWN0Ijp7InVybCI6Imh0dHBzOi8vYXJ0aWZhY3RzLmV4YW1wbGUudGVzdC9maXh0dXJlLW9ubHkuemR4Iiwic2hhMjU2IjoiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsImJ5dGVzIjoxMDB9LCJjb21wYXRpYmlsaXR5Ijp7InByb3RvY29sIjoxLCJydW50aW1lIjoibm9kZSIsIm1pbmltdW0iOiIyMi4xOC4wIiwicGxhdGZvcm1zIjpbIm1hY29zIiwid2luZG93cyIsImxpbnV4Il19LCJzb3VyY2UiOnsicmVwbyI6Imh0dHBzOi8vc291cmNlLmV4YW1wbGUudGVzdC9maXh0dXJlLW9ubHkiLCJjb21taXQiOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwibGljZW5zZSI6Ik1JVCJ9fQ==",
+    "signature": "/IzHN19Eo36eAQAuIf35CYDKqCNTIA6Db4YKnkXJyq+4rB+dlDkW/DRw93kQn18CaUpDW9bcPYVyiigoG5ORAg=="
+  }
+}

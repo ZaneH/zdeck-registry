@@ -65,7 +65,7 @@ try {
   await page.getByRole("heading", { name: "Home Assistant", exact: true }).waitFor();
   const homeInstall = page.getByRole("button", { name: "Install unavailable" });
   assert(await homeInstall.isDisabled(), "Unavailable install must be disabled.");
-  await page.getByText("Planned desktop request").click();
+  await page.getByText("Desktop request").click();
   await page.getByText("No request is available for this entry.").waitFor();
 
   await page.getByRole("link", { name: "All plugins" }).click();

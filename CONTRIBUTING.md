@@ -19,8 +19,10 @@ plugin's existing README; do not fill in a second description or an access quest
 2. Add one record to `registry/plugins.json`. See [the schema](docs/registry.md) for every field.
 3. Keep `"release": null` and use `"status": "preview"` or `"in-development"` until a real archive
    exists.
-4. For a release, set `"status": "published"` and include the `.zdx` URL and checksum. Signing is
-   an architectural contract only for now; do not invent signatures or verification badges.
+4. For a release, follow [maintainer signing/publication](docs/releases.md). Set `"status": "published"`
+   and `"release": {"record":"releases/<id>/<version>.json"}` only for a genuine verified envelope
+   matching the catalogue facts. The separate app-ready gate stays off until configured app/native
+   QA/publication are real. Do not invent signatures, review badges, compatibility or checksums.
 
 ```json
 {

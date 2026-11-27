@@ -1,12 +1,9 @@
 import registryJson from "../../registry/plugins.json";
-import homeAssistantReadme from "../../registry/readmes/home-assistant.md?raw";
-import spotifyReadme from "../../registry/readmes/spotify.md?raw";
 import { parseRegistry } from "../lib/registry";
 
-/** READMEs are imported at build time; the site never fetches an arbitrary README URL. */
-export const READMES: Readonly<Record<string, string>> = {
-  "home-assistant.md": homeAssistantReadme,
-  "spotify.md": spotifyReadme,
-};
-
+/** Local build-time input only; new catalogue entries need no handwritten import list. */
+const inputs = import.meta.glob<string>("../../registry/readmes/*.md", { eager: true, query: "?raw", import: "default" });
+export const READMES: Readonly<Record<string, string>> = Object.fromEntries(
+  Object.entries(inputs).map(([path, markdown]) => [path.slice(path.lastIndexOf("/") + 1), markdown]),
+);
 export const REGISTRY = parseRegistry(registryJson, new Set(Object.keys(READMES)));

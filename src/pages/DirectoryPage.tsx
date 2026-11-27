@@ -21,7 +21,7 @@ export function DirectoryPage({ plugins, initialQuery = "", initialTag = TAG_ALL
   const tags = tagsOf(plugins);
   const activeTag = tags.includes(tag) ? tag : TAG_ALL;
   const visible = filterPlugins(plugins, query, activeTag);
-  const installable = plugins.filter(canOfferInstall).length;
+  const installable = plugins.filter((plugin) => canOfferInstall(plugin)).length;
   const filtered = query.trim() !== "" || activeTag !== TAG_ALL;
 
   function clear() {

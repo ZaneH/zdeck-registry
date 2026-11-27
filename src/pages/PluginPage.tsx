@@ -69,7 +69,7 @@ export function PluginPage({ plugin, readmes }: PluginPageProps) {
           )}
           <p className="install-help" id="install-unavailable">
             {plugin.status === "published"
-              ? "Signed desktop installation is not implemented. This site will not trigger a download."
+              ? offered ? "Opens an untrusted request in the configured desktop build. Lookup, download and disabled installation each need your confirmation." : "This published record is not activated for the configured desktop release contract. This site will not trigger a download."
               : "There is no downloadable .zdx archive for this entry. Nothing will be installed."}
           </p>
 
@@ -93,11 +93,11 @@ export function PluginPage({ plugin, readmes }: PluginPageProps) {
           </dl>
 
           <details className="install-request">
-            <summary>Planned desktop request</summary>
+            <summary>Desktop request</summary>
             {request ? <code>{request}</code> : <p>No request is available for this entry.</p>}
             <p>
-              This is a future request for zDeck to <strong>ask you to confirm</strong>. It does not
-              install anything by itself, and this prototype does not handle it.
+              This asks zDeck to <strong>show a review</strong>. It does not install anything by
+              itself. The desktop independently verifies its configured release record and archive.
             </p>
           </details>
 

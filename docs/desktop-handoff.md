@@ -1,69 +1,40 @@
-# Desktop handoff (not implemented here)
+# Desktop handoff (unreleased)
 
-This is a contract for future zDeck desktop work. **None of it exists in this repository or in the
-current desktop app.** The website does not install plugins, verify signatures, download archives,
-check for updates, or run plugin settings.
+zDeck now implements the identity-only native link boundary and an explicitly configured signed
+release resolver/downloader feeding its existing local ZIP review/installer. This static website
+never installs code, runs plugins, reads settings or detects an install result. This checkout has
+no configured endpoint/keys or published installable seeds. See [releases.md](releases.md) for the
+matching exact signed envelope, public-key bootstrap and maintainer publication gates.
 
-## Install request
-
-A published record can produce:
+A build-verified published record with an explicitly app-ready contract may offer:
 
 ```text
-zdeck://plugins/install?id=<encoded id>&version=<encoded version>
+zdeck://plugins/install?id=<encoded-id>&version=<encoded-exact-version>
 ```
 
-The link is an untrusted request. The desktop must not execute it silently.
+The desktop accepts only bounded ID/exact version. No URLs, paths, commands or executable fields
+are accepted. It shows an identity prompt, then **Look up release** for signature-verified metadata,
+then **Download for review**, then **Install disabled** for the actual validated archive. It shows
+registry key ID and authenticated source commit/licence/runtime/platform/artifact facts without
+claiming publisher identity or safety review. Every fetch uses normal HTTPS/TLS with public DNS
+validation/pinning, no redirects/proxies, bounded bodies and deadlines. Unknown keys/schema/fields,
+wrong ID/version, unsupported compatibility, digest/size and ZIP/manifest mismatches fail closed.
 
-A future desktop flow should:
+Exact verified bytes use the same private staging, strict ZIP validation, snapshot/fingerprint
+checks, serialized lifecycle and atomic no-replace installer as picker/drop. No install hooks or
+plugin code run; installation remains disabled/untrusted after restart. Trust/enable are separate
+explicit fingerprint decisions. Collisions are refused. Cancellation and stale/duplicate links
+cannot replace an active local review or execute anything. Neither project silently registers an
+OS handler or grants a website native privileges.
 
-1. Treat the query as untrusted input and resolve the plugin from a locally verified signed
-   registry snapshot, not by fetching arbitrary website content.
-2. Show the plugin name, version, publisher, source repository, licence, runtime/platform
-   requirements, archive URL, SHA-256, and signature status.
-3. Download only over HTTPS from the recorded release URL, verify the archive SHA-256 and signature,
-   and extract the ordinary ZIP `.zdx` into a temporary directory. Reject malformed archives,
-   path traversal, symlinks, and unexpected executable paths.
-4. Require an explicit confirmation that explains the plugin runs as a separate process with the
-   user's permissions, not in a sandbox. Cancel must leave no installed files.
-5. Hand the validated package to the same native installer used by drag/drop and the file picker.
-   Never run install scripts or a pre-install/post-install hook.
+Release QA still needs installed handlers, closed/running/tray-hidden delivery, cancellation,
+local priority, actual dialogs/drop and packaged-webview/filesystem behavior on **Windows, macOS
+and Linux**. A browser test/no-bundle build is not evidence of that parity. Production publication,
+keys, distributed configured builds and immutable hosting remain maintainer prerequisites.
 
-No signature algorithm, key distribution, or immutable artifact store is implemented yet. Do not
-claim “verified” in the UI until those exist and are tested.
+## Still out of scope
 
-## Manual update checks
-
-Desktop update checks are manual and explicit. There is no polling or background install in this
-registry prototype.
-
-- Exact success result: **All packages are up to date.**
-- A failed or unreachable check must be shown as a failure/unknown, not as that success string.
-- A new version is a review-and-confirm action, using the same archive/signature checks as install.
-- Never auto-retry an uncertain install or silently replace an installed package.
-
-The exact success sentence belongs to the future desktop UI; the website does not run update
-checks.
-
-## Plugin settings
-
-The desktop should show plugin-specific settings **only when the plugin declares them**. There is no
-generic permissions or settings form in this registry, and no giant access questionnaire is
-required to list a plugin. A plugin without declared settings gets no settings section.
-
-## Drag/drop and file picker
-
-A dropped `.zdx` and a `.zdx` chosen with the file picker must feed the **same** native installer:
-same archive validation, same signature/checksum prompt, same confirmation, same destination rules.
-There must not be a second, weaker import path.
-
-## Handoff data
-
-The registry can supply:
-
-- manifest identity: `id`, `version`, `name`, `summary`, `license`, `author`
-- source: `repo`
-- compatibility: `platforms`, `runtime`
-- artifact: `release.url`, `release.sha256`, optional `release.signature`
-- documentation: the local README filename rendered by this site
-
-The desktop remains responsible for verifying all of it. Registry JSON is not a trust root.
+No polling, manual update checker or replacement flow is provided. A future explicit check must
+report failure/unknown honestly, not “All packages are up to date.” Settings stay in the desktop
+and appear only for plugins declaring them; there is no author questionnaire here. Downloads,
+trust and enable must never be silently inferred from a website action or signature badge.

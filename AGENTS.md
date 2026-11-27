@@ -50,10 +50,11 @@ button is disabled.
 
 ## Scope
 
-Native desktop installation, update checks, plugin settings, drag-and-drop import, signing-key
-creation, and signature verification are outside this repository's implementation. Record their
-interfaces in `docs/desktop-handoff.md`; do not pretend they work. zDeck's native requirements do
-not apply to this static site.
+Native desktop installation, update checks, plugin settings, drag-and-drop import and production
+signing-key creation stay outside this repository. Build-time signature verification, deliberately
+supplied external-key signing and immutable static release output are implemented in
+`scripts/releases.ts`; see `docs/releases.md`. No secret belongs in the site or CI. Native interfaces
+remain in `docs/desktop-handoff.md`; zDeck's native requirements do not apply to this static site.
 
 ## Checks
 
