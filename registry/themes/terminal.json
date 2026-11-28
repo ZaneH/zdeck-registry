@@ -1,0 +1,28 @@
+{
+  "id": "terminal",
+  "name": "Wasteland Terminal",
+  "summary": "An olive-black research terminal with phosphor text, monospace readouts, angular frames and static scanlines.",
+  "author": "zDeck",
+  "license": "MIT",
+  "repo": "https://github.com/ZaneH/zdeck",
+  "readme": "terminal.md",
+  "kind": "built-in",
+  "builtin": "terminal",
+  "sourceCommit": "4550363f027f7807fd7c6537d4aeb699cfdec9f0",
+  "preview": {
+    "fixture": "zdeck-sample-deck-1",
+    "desktop": {
+      "src": "previews/terminal/desktop.png",
+      "alt": "Wasteland Terminal appearance on the sample deck: olive-black instrument panels, phosphor green labels, segmented meters and angular tile frames."
+    },
+    "phone": {
+      "src": "previews/terminal/phone.png",
+      "alt": "Wasteland Terminal appearance on the sample deck phone view: olive-black sections, monospace controls and segmented range meters."
+    }
+  },
+  "tags": ["appearance", "terminal", "monospace"],
+  "provenance": {
+    "kind": "official",
+    "evidence": "https://github.com/ZaneH/zdeck/tree/4550363f027f7807fd7c6537d4aeb699cfdec9f0/src"
+  }
+}

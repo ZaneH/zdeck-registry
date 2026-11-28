@@ -1,8 +1,10 @@
 # zDeck plugin registry
 
-A static, Git-backed directory for zDeck plugins. It shows what a plugin is, where its source
-lives, what runtime it needs, and whether it can actually be installed. It is not a marketplace:
-there are no accounts, ratings, reviews, download counts, or publishing API.
+A static, Git-backed directory for zDeck plugins and themes. It shows what a plugin is, where its
+source lives, what runtime it needs, and whether it can actually be installed. Themes are a separate
+catalogue: built-in appearances are already in zDeck, and community entries are source previews, not
+packages. It is not a marketplace: there are no accounts, ratings, reviews, download counts, or
+publishing API.
 
 **Prototype status.** Browse, search, filtering, detail pages, and README rendering work.
 Build-time signed release verification and external-key release tooling work; a deliberately
@@ -22,9 +24,26 @@ build-verified published identity. Updates/settings are not website features.
   are explicitly rejected.
   See [the Spotify pilot record and activation](docs/spotify-candidate.md).
 
-Nothing on this site installs code. The install control is an untrusted request, offered only for
-a genuine prebuilt `.zdx` archive and a build-verified signed release record on its claimed
+Nothing on this site installs code. The plugin install control is an untrusted request, offered
+only for a genuine prebuilt `.zdx` archive and a build-verified signed release record on its claimed
 platforms.
+
+## Themes
+
+`#/themes` is a separate category from the plugin directory at `#/`. Both keep the same compact
+search, filters, sort/order, URL/back behavior and detail layout.
+
+- **Glass** and **Wasteland Terminal** are real built-in appearances. Their entries say **Included
+  in zDeck** and name the exact **Settings → Appearance** selection; there is nothing to download.
+- Community theme entries are **source previews**: reviewed source, README and local sample-deck
+  screenshots, with no package format, install button or theme deep link. They are submitted as a
+  normal Git pull request.
+- Every theme shows authentic local desktop (1200 × 800) and phone (390 × 844) previews of the same
+  `zdeck-sample-deck-1` fixture. Previews are bounded regular PNG files and are never remote images,
+  submitted CSS or executable code. There are no theme download or popularity metrics.
+
+The complete theme record schema, preview limits and validation rules are in
+[docs/themes.md](docs/themes.md).
 
 ## Self-host with Docker Compose
 
@@ -72,9 +91,9 @@ npm run build
 CHROME_BIN="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" npm run smoke
 ```
 
-It checks the directory, search and empty state, both detail states, the disabled install control,
-safe README behavior, no external requests, and a narrow viewport. It saves a screenshot under
-`/tmp`.
+It checks both categories, search and empty states, plugin and theme detail, the plugin install
+gates, no theme install/deep link, local preview dimensions and alt text, detail/back criteria, safe
+README behavior, no external requests, and narrow layouts. It saves screenshots under `/tmp`.
 
 ## Add a plugin
 
@@ -100,22 +119,37 @@ published; then version, runtime, platforms, and a matching signed release recor
 declare only runtime/security facts the user needs before installing, not optional presentation
 extras.
 
-The complete schema, validation rules, archive contract, and signing plan are in
-[docs/registry.md](docs/registry.md). Contribution steps are in [CONTRIBUTING.md](CONTRIBUTING.md).
+The complete plugin schema, validation rules, archive contract, and signing plan are in
+[docs/registry.md](docs/registry.md). Theme records and previews are in [docs/themes.md](docs/themes.md).
+Contribution steps are in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Add a theme
+
+A theme entry is a source review, not a package release. Add
+`registry/themes/<id>.json`, `registry/theme-readmes/<id>.md`, and exactly two local PNG previews
+at `registry/previews/<id>/desktop.png` (1200 × 800) and `phone.png` (390 × 844). Use
+`"kind": "source-preview"` with no `builtin`, a full 40-character lowercase source commit, and the
+standard `zdeck-sample-deck-1` fixture. Do not add release, runtime, archive or install fields. See
+[the theme schema](docs/themes.md) and the generated `npm run submission:theme` flow in
+[submission steps](docs/submissions.md#submit-a-theme-source-preview). The generator prepares a
+local review bundle only; a normal reviewed PR is the publishing path.
 
 ## Safety
 
-- READMEs come from this checkout at build time. The site never requests a plugin's README URL.
+- READMEs come from this checkout at build time. The site never requests a plugin or theme README URL.
 - README rendering has no raw HTML, remote images, iframes, active embeds, or `javascript:` links.
-- Registry records are validated as a whole. A malformed record fails the build/tests; no partial
-  catalogue is served.
-- CI never runs third-party plugin code and has read-only repository permissions.
+- Theme previews are local bounded PNGs only; no remote images, SVG, submitted CSS/code or install
+  action. A community source preview is not a package.
+- Both catalogues are validated as a whole. A malformed record, README or preview fails the
+  build/tests; no partial catalogue is served.
+- CI never runs third-party plugin or theme code and has read-only repository permissions.
 - A `zdeck://plugins/install…` link is an untrusted request for desktop confirmation, not execution.
   Only an app-ready build-verified published record can offer it; seed previews remain disabled.
 
 ## Documents
 
-- [Per-plugin submissions and GitHub workflow](docs/submissions.md)
+- [Plugin and theme submissions and GitHub workflow](docs/submissions.md)
+- [Theme catalogue schema, previews and routes](docs/themes.md)
 - [First Home Assistant candidate and exact maintainer commands](docs/home-assistant-candidate.md)
 - [Registry schema and install contract](docs/registry.md)
 - [Signed releases: tooling, trust bootstrap, immutable hosting and smoke](docs/releases.md)

@@ -1,0 +1,28 @@
+{
+  "id": "glass",
+  "name": "Glass",
+  "summary": "A bright lilac appearance with smoked, translucent controls, circular buttons and a tall volume pill.",
+  "author": "zDeck",
+  "license": "MIT",
+  "repo": "https://github.com/ZaneH/zdeck",
+  "readme": "glass.md",
+  "kind": "built-in",
+  "builtin": "glass",
+  "sourceCommit": "4550363f027f7807fd7c6537d4aeb699cfdec9f0",
+  "preview": {
+    "fixture": "zdeck-sample-deck-1",
+    "desktop": {
+      "src": "previews/glass/desktop.png",
+      "alt": "Glass appearance on the sample deck: lilac wallpaper with cyan and rose pools, circular and capsule controls, and a vertical volume pill."
+    },
+    "phone": {
+      "src": "previews/glass/phone.png",
+      "alt": "Glass appearance on the sample deck phone view: lilac wallpaper, stacked sections and compact smoked controls."
+    }
+  },
+  "tags": ["appearance", "glass", "lilac"],
+  "provenance": {
+    "kind": "official",
+    "evidence": "https://github.com/ZaneH/zdeck/tree/4550363f027f7807fd7c6537d4aeb699cfdec9f0/src"
+  }
+}

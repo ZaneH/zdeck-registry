@@ -12,6 +12,7 @@
 !registry/**
 !scripts/
 !scripts/releases.ts
+!scripts/themes.ts
 !tests/
 !tests/**
 !hosting/

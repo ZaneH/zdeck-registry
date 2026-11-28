@@ -206,14 +206,14 @@ export function statusNote(plugin: PluginRecord): string {
   return "Not published. Nothing to install yet.";
 }
 
-export function tagsOf(plugins: PluginRecord[]): string[] {
-  return [...new Set(plugins.flatMap((plugin) => plugin.tags ?? []))].sort((a, b) => a.localeCompare(b));
+export function tagsOf(entries: readonly { tags?: string[] }[]): string[] {
+  return [...new Set(entries.flatMap((entry) => entry.tags ?? []))].sort((a, b) => a.localeCompare(b));
 }
 
 export const README_LIMIT = 64 * 1024;
 
-export function readmeFor(plugin: PluginRecord, readmes: Readonly<Record<string, string>>): string | null {
-  if (!Object.hasOwn(readmes, plugin.readme)) return null;
-  const markdown = readmes[plugin.readme];
+export function readmeFor(entry: { readme: string }, readmes: Readonly<Record<string, string>>): string | null {
+  if (!Object.hasOwn(readmes, entry.readme)) return null;
+  const markdown = readmes[entry.readme];
   return new TextEncoder().encode(markdown).length <= README_LIMIT ? markdown : null;
 }

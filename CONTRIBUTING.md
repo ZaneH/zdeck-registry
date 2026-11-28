@@ -1,7 +1,9 @@
 # Contributing
 
-For a prepared archive, use the [generated submission bundle / GitHub intake workflow](docs/submissions.md)
-instead of hand-copying manifest metadata. Each plugin has its own record; no shared list edit. a plugin
+Plugins and themes are separate catalogues. For a prepared plugin archive, use the
+[generated submission bundle / GitHub intake workflow](docs/submissions.md) instead of hand-copying
+manifest metadata. Each plugin has its own record; no shared list edit. A community theme is a
+source preview, not a package; see [the theme schema](docs/themes.md).
 
 The registry is a small JSON file plus README files, reviewed as a pull request. Reuse the
 plugin's existing README; do not fill in a second description or an access questionnaire.
@@ -52,6 +54,48 @@ not establish it. This is neither endorsement nor security review. Optional coun
 real source and observation date; dates require source/release/Git evidence in the PR. Omit them
 when unknown—never fill in zero or today's date. See [snapshot meanings and date rules](docs/registry.md#snapshot-and-date-semantics).
 
+## Add a theme source preview
+
+A theme PR documents reviewed source and two screenshots of the standard sample deck. It does not
+add a package, release, runtime, signature or install action.
+
+1. Add `registry/themes/<id>.json`, `registry/theme-readmes/<id>.md`, and
+   `registry/previews/<id>/desktop.png` plus `phone.png`. Both previews must show the same
+   `zdeck-sample-deck-1` fixture.
+2. Use `"kind": "source-preview"`, omit `builtin`, and give the full immutable lowercase
+   40-character `sourceCommit` for `repo`. Declare an honest licence and author. Do not add
+   release/runtime/install/package fields.
+3. Previews must be regular local PNG files, not symlinks, at most 2 MiB: desktop exactly
+   1200 × 800 and phone exactly 390 × 844. Plain-text `alt` is required for both. Do not add remote
+   images, SVG, submitted CSS or executable content.
+4. Keep `addedAt`/`updatedAt` absent unless the PR has traceable source/Git evidence. Built-in
+   entries are maintainer-curated; community entries are source previews and remain
+   non-installable.
+5. Use the submission generator when available:
+   `npm run submission:theme -- --metadata … --readme … --desktop-preview … --phone-preview … --repo … --commit … --output …`.
+   The tool generates a source-preview bundle; it does not install, sign or publish anything.
+   Review its generated record against [the schema](docs/themes.md) before opening the PR.
+
+```json
+{
+  "id": "example-theme",
+  "name": "Example Theme",
+  "summary": "A reviewed appearance shown on the standard sample deck.",
+  "author": "Example Author",
+  "license": "MIT",
+  "repo": "https://github.com/example/zdeck-theme",
+  "readme": "example-theme.md",
+  "kind": "source-preview",
+  "sourceCommit": "0123456789abcdef0123456789abcdef01234567",
+  "preview": {
+    "fixture": "zdeck-sample-deck-1",
+    "desktop": { "src": "previews/example-theme/desktop.png", "alt": "Example Theme on the standard sample deck, desktop view." },
+    "phone": { "src": "previews/example-theme/phone.png", "alt": "Example Theme on the standard sample deck, phone view." }
+  },
+  "tags": ["appearance", "example"]
+}
+```
+
 ## 3. Check locally
 
 ```sh
@@ -63,7 +107,9 @@ npm run storybook:build
 ```
 
 Open the detail page and run the smoke check if a browser is available. Confirm that an unpublished
-entry says so, the install button is disabled, and no `.zdx` download is implied.
+plugin entry says so, the install button is disabled, and no `.zdx` download is implied. For a
+theme, confirm both categories and routes work, the local previews are the right size, built-ins say
+Included in zDeck, and there is no install button or theme deep link.
 
 ## 4. Open the pull request
 

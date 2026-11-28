@@ -2,10 +2,12 @@
 
 ## Brief
 
-A static, Git-backed directory for zDeck plugins. It should make a plugin's identity, licence,
-source, runtime, and honest availability obvious before anyone is asked to install anything. It is
-not a marketplace: no accounts, ratings, reviews, telemetry, or publishing API. Optional attributed
-metric snapshots can be shown; there is no live download counter or GitHub feed.
+A static, Git-backed directory for zDeck plugins and themes. It should make a plugin's identity,
+licence, source, runtime, and honest availability obvious before anyone is asked to install
+anything. Themes are a separate catalogue: built-ins are already in zDeck and community entries are
+source previews, not packages. It is not a marketplace: no accounts, ratings, reviews, telemetry, or
+publishing API. Optional attributed plugin metric snapshots can be shown; there is no live download
+counter, GitHub feed or theme popularity metric.
 
 ## North star
 
@@ -62,6 +64,27 @@ rows stack metadata below the title; the detail install panel follows the README
 - The README is content, not remote content: it comes from the registry checkout at build time and
   renders without raw HTML, remote images, iframes, or executable links.
 
+## Themes category
+
+Themes share the plugin directory's shell rather than becoming a card marketplace:
+
+- A compact **Plugins / Themes** switch sits in the header with `aria-current="page"` on the active
+  category. `#/themes` and `#/theme/<id>` sit beside the unchanged `#/` and `#/plugin/<id>` routes.
+- The same left filter rail, search field, result count, sort/order controls, keyboard behavior,
+  URL state and detail/back links are reused. Theme facets are **Included in zDeck** and **Source
+  preview**; categories reuse tags.
+- Rows keep the recessed key/row rhythm, but replace the plugin key well with a small local desktop
+  preview thumbnail. They show author, summary, tags and kind. They never show a downloads or
+  popularity row: there is no theme metric, so there is no `—` pretending to be one.
+- Theme detail reuses the plugin detail type and panel. It adds a desktop (1200 × 800) and phone
+  (390 × 844) preview of the same sample deck, each with plain-text `alt` and a small caption.
+- Built-ins say **Included in zDeck**, with the exact **Settings → Appearance** choice and the
+  per-section **Theme → …** override. Source previews say **Source preview** and **no installable
+  package**. No theme page has an install button or a theme `zdeck://` link.
+- Preview files are local, bounded, non-symlink PNGs. The page loads no submitted CSS/code and no
+  remote image. Screenshots are evidence of the fixture, not a live theme runtime or an
+  accessibility/performance claim.
+
 ## Check against the north star
 
 - Not a broadsheet or card marketplace: one column, short rules, key-like row wells.
@@ -71,11 +94,15 @@ rows stack metadata below the title; the detail install panel follows the README
 
 ## States to build and show in Storybook
 
-Directory default, filtered, no matches, empty, narrow, long/unbroken names, relevance, both
+Plugin directory default, filtered, no matches, empty, narrow, long/unbroken names, relevance, both
 publisher groups, combined categories, metric/date sorts, unknown metrics, and the 500-record
-limit; detail preview, in-development/pending release; registry error; narrow detail. Stories use
-local fixtures only; synthetic counts, dates and publisher classifications have an explicit
-fictional banner and never enter the production catalogue.
+limit; plugin detail preview, in-development/pending release; registry error; narrow detail.
+
+Theme directory default, filtered, no matches, empty, included-only, source-preview, long names,
+narrow; theme detail for Glass, Wasteland Terminal and a fictional source-preview state, with a
+missing README and narrow detail. Stories use local fixtures only; synthetic counts, dates,
+publisher classifications and the source-preview fixture have an explicit fictional banner and
+never enter the production catalogue.
 
 Directory behavior, reproducible browser checks, screenshots and bounded search timing evidence
 are recorded in [directory-checks.md](directory-checks.md).

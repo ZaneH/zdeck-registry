@@ -2,9 +2,12 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { buildReleases } from "./scripts/releases";
+import { buildThemes } from "./scripts/themes";
 
 export default defineConfig(() => {
-  const { records, ready } = buildReleases(fileURLToPath(new URL(".", import.meta.url)));
+  const root = fileURLToPath(new URL(".", import.meta.url));
+  const { records, ready } = buildReleases(root);
+  buildThemes(root);
   return {
     plugins: [react(), {
       name: "immutable-signed-releases",

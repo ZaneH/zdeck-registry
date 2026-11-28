@@ -1,7 +1,8 @@
 # Directory UI verification
 
-Checked locally on 2026-11-27, using the built static site and Storybook with installed headless
-Brave on macOS. Browser evidence only: no third-party plugin code or native install flow ran.
+Checked locally on 2026-11-28, using the built static site and Storybook with installed headless
+Brave on macOS. Browser evidence only: no third-party plugin or theme code and no native install
+flow ran.
 
 ## Commands
 
@@ -14,13 +15,20 @@ CHROME_BIN="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" npm ru
 CHROME_BIN="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" npm run smoke:directory
 ```
 
-- Tests: 71 passed across 7 files, including existing README safety/release checks. New coverage
-  includes ranking, explicit sorting during a query, every metric/date direction, genuine zero vs
-  unknown, deterministic ties, invalid metadata, normalized dates, publisher provenance, combined
-  facets, the 500-record boundary, URL round-trips, keyboard menus and filter disclosure focus.
+- Tests: 97 Vitest tests across 10 files plus 15 Python tests. Coverage includes the existing
+  plugin README safety/release/install gates, plugin directory behavior, and the new theme parser
+  exact-key/path/commit/README/preview rejection cases, theme kind facets, route parsing, preview
+  file signature/dimension/size/symlink checks, and theme UI (no install button or theme deep link).
 - Typecheck, production build and Storybook build passed. Storybook reports its large generated
   preview chunk warning and Node's `module.register()` deprecation warning; neither blocks builds.
-- Existing smoke passed: search/empty/detail, disabled preview installation, safe README, narrow.
+- Existing plugin smoke passed: search/empty/detail, disabled preview installation, safe README,
+  narrow.
+- Theme smoke passed: category switch and `aria-current`, detail/back with preserved search,
+  both built-in rows, local 1200×800 thumbnails, detail previews at 1200×800 and 390×844 with alt,
+  exact Appearance guidance, no theme install button, no theme `zdeck://` link, and 390px overflow.
+- `npm run submission:theme` was exercised locally for a throwaway source-preview bundle; the
+  generated record/README/previews then passed the same whole-catalogue build validation. Nothing
+  was signed, uploaded, published or installed.
 - Directory smoke passed: real detail/back links, browser Back, reload, root navigation reset,
   menu arrow/Home/End/Escape focus, checkbox keyboard interaction, filter selection count and
   Escape restoration, ranked fictional results and explicit GitHub-star sorts.
@@ -36,6 +44,8 @@ safe-integer count also fit both narrow viewports without document overflow.
 
 Generated screenshots (local `/tmp` evidence, not production assets):
 
+- `/tmp/zdeck-registry-themes-narrow.png`
+- `/tmp/zdeck-registry-theme-detail-narrow.png`
 - `/tmp/zdeck-directory-desktop.png`
 - `/tmp/zdeck-directory-390.png`
 - `/tmp/zdeck-directory-390-filters.png`

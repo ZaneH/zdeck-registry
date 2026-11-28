@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Static plugin directory for zDeck.",
+  "description": "Static plugin and theme directory for zDeck.",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run && python3 -B -m unittest discover -s tests -p 'test_*.py'",
     "submission": "python3 -B scripts/submission.py",
+    "submission:theme": "python3 -B scripts/theme_submission.py",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006 --no-open --disable-telemetry",
     "storybook:build": "storybook build -o storybook-static --disable-telemetry",

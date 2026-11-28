@@ -1,8 +1,10 @@
 import type { PluginRecord } from "./registry";
+import type { ThemeRecord } from "./themes";
 
 export const SORTS = ["relevance", "name", "downloads", "githubStars", "updatedAt", "addedAt"] as const;
+export const THEME_SORTS = ["relevance", "name", "updatedAt", "addedAt"] as const;
 export type DirectorySort = typeof SORTS[number];
-export type Origin = "official" | "community";
+export type Origin = "official" | "community" | "built-in" | "source-preview";
 export interface DirectoryState {
   query: string;
   categories: string[];
@@ -12,48 +14,74 @@ export interface DirectoryState {
 }
 export const DEFAULT_DIRECTORY: DirectoryState = { query: "", categories: [], origins: [], sort: "relevance", order: "desc" };
 
-export const originOf = (plugin: PluginRecord): Origin => plugin.provenance?.kind ?? "community";
+export const originOf = (entry: { provenance?: { kind: "official" | "community" } }): Origin =>
+  entry.provenance?.kind ?? "community";
 const lower = (text: string) => text.toLocaleLowerCase("en");
 const names = new Intl.Collator("en", { sensitivity: "base", numeric: true });
-const byName = (a: PluginRecord, b: PluginRecord) => names.compare(a.name, b.name) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
-function relevance(plugin: PluginRecord, query: string): number | null {
+interface CatalogEntry {
+  id: string;
+  name: string;
+  summary: string;
+  tags?: string[];
+  addedAt?: string;
+  updatedAt?: string;
+  downloads?: { count: number };
+  githubStars?: { count: number };
+}
+
+const byName = (a: CatalogEntry, b: CatalogEntry) =>
+  names.compare(a.name, b.name) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+
+function relevance(entry: CatalogEntry, query: string): number | null {
   if (!query) return 0;
-  const name = lower(plugin.name), id = lower(plugin.id);
-  const fields = [name, id, lower(plugin.summary), ...(plugin.tags ?? []).map(lower)];
+  const name = lower(entry.name), id = lower(entry.id);
+  const fields = [name, id, lower(entry.summary), ...(entry.tags ?? []).map(lower)];
   const terms = query.split(/\s+/);
   if (!terms.every((term) => fields.some((field) => field.includes(term)))) return null;
   if (name === query || id === query) return 100;
   if (name.startsWith(query) || id.startsWith(query)) return 80;
   if (name.includes(query) || id.includes(query)) return 60;
   if (terms.every((term) => name.includes(term))) return 50;
-  if (plugin.tags?.some((tag) => lower(tag) === query)) return 30;
+  if (entry.tags?.some((tag) => lower(tag) === query)) return 30;
   return 10;
 }
 
 /** Synchronous, bounded to the catalogue's 500-record limit. Unknown values always sort last. */
-export function selectPlugins(plugins: readonly PluginRecord[], state: DirectoryState): PluginRecord[] {
+function selectEntries<T extends CatalogEntry>(
+  entries: readonly T[],
+  state: DirectoryState,
+  facetsOf: (entry: T) => readonly Origin[],
+): T[] {
   const query = lower(state.query.trim());
-  const scored = plugins.flatMap((plugin) => {
-    if (state.origins.length && !state.origins.includes(originOf(plugin))) return [];
-    if (state.categories.length && !state.categories.some((tag) => plugin.tags?.includes(tag))) return [];
-    const score = relevance(plugin, query);
-    return score === null ? [] : [{ plugin, score }];
+  const scored = entries.flatMap((entry) => {
+    if (state.origins.length && !state.origins.some((origin) => facetsOf(entry).includes(origin))) return [];
+    if (state.categories.length && !state.categories.some((tag) => entry.tags?.includes(tag))) return [];
+    const score = relevance(entry, query);
+    return score === null ? [] : [{ entry, score }];
   });
   const direction = state.order === "asc" ? 1 : -1;
   const sort = state.sort;
   return scored.sort((a, b) => {
-    if (sort === "relevance") return (query ? (a.score - b.score) * direction : 0) || byName(a.plugin, b.plugin);
-    if (sort === "name") return names.compare(a.plugin.name, b.plugin.name) * direction || byName(a.plugin, b.plugin);
-    const value = (plugin: PluginRecord) => {
-      if (sort === "downloads" || sort === "githubStars") return plugin[sort]?.count;
-      const date = plugin[sort];
+    if (sort === "relevance") return (query ? (a.score - b.score) * direction : 0) || byName(a.entry, b.entry);
+    if (sort === "name") return names.compare(a.entry.name, b.entry.name) * direction || byName(a.entry, b.entry);
+    const value = (entry: T) => {
+      if (sort === "downloads" || sort === "githubStars") return entry[sort]?.count;
+      const date = entry[sort];
       return date === undefined ? undefined : Date.parse(date);
     };
-    const av = value(a.plugin), bv = value(b.plugin);
-    if (av === undefined || bv === undefined) return av === bv ? byName(a.plugin, b.plugin) : av === undefined ? 1 : -1;
-    return (av - bv) * direction || byName(a.plugin, b.plugin);
-  }).map(({ plugin }) => plugin);
+    const av = value(a.entry), bv = value(b.entry);
+    if (av === undefined || bv === undefined) return av === bv ? byName(a.entry, b.entry) : av === undefined ? 1 : -1;
+    return (av - bv) * direction || byName(a.entry, b.entry);
+  }).map(({ entry }) => entry);
+}
+
+export function selectPlugins(plugins: readonly PluginRecord[], state: DirectoryState): PluginRecord[] {
+  return selectEntries(plugins, state, (plugin) => [originOf(plugin)]);
+}
+
+export function selectThemes(themes: readonly ThemeRecord[], state: DirectoryState): ThemeRecord[] {
+  return selectEntries(themes, state, (theme) => [theme.kind]);
 }
 
 export function parseDirectoryState(hash: string): DirectoryState {
@@ -62,7 +90,8 @@ export function parseDirectoryState(hash: string): DirectoryState {
   return {
     query: (params.get("q") ?? "").slice(0, 200),
     categories: [...new Set(params.getAll("category"))].filter((tag) => /^[a-z0-9][a-z0-9-]{0,31}$/.test(tag)),
-    origins: [...new Set(params.getAll("origin"))].filter((kind): kind is Origin => kind === "official" || kind === "community"),
+    origins: [...new Set(params.getAll("origin"))].filter((kind): kind is Origin =>
+      kind === "official" || kind === "community" || kind === "built-in" || kind === "source-preview"),
     sort: SORTS.includes(sort as DirectorySort) ? sort as DirectorySort : "relevance",
     order: params.get("order") === "asc" ? "asc" : "desc",
   };

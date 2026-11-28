@@ -1,6 +1,10 @@
 # Registry records and install contract
 
-## Catalogue
+## Catalogues
+
+There are two separate catalogues: plugins and themes. This page covers plugin records and the
+install contract. Theme records use a distinct type with no package, release or install fields; see
+[themes.md](themes.md).
 
 Each `registry/plugins/<id>.json` contains one record below. There is no aggregate JSON source
 or handwritten import list. The browser and release tooling assemble a version-1 catalogue at
@@ -91,7 +95,8 @@ See [desktop-handoff.md](desktop-handoff.md).
 
 ## README rendering
 
-READMEs are imported with Vite `?raw` at build time from `registry/readmes/`. There is no runtime
+Plugin and theme READMEs are imported with Vite `?raw` at build time from `registry/readmes/` and
+`registry/theme-readmes/`. There is no runtime
 request to a README URL, no remote image proxy, and no raw HTML execution. The renderer allows
 headings, lists, tables, code blocks, task lists, and HTTP(S) links. Relative links resolve only
 when an explicit GitHub `/tree/<branch>/<path>` source URL gives a known README base; otherwise they
@@ -101,14 +106,16 @@ Tests cover hostile input in `tests/readme.test.tsx`.
 
 ## Directory search, filters and ordering
 
-Search runs synchronously in memory over ID, name, summary and tags (at most 500 records). No
+Both catalogues share the same bounded local search/filter/sort behavior. Search runs synchronously
+in memory over ID, name, summary and tags (at most 500 records). No
 submit, debounce delay, background request or README fetching. Every query word must match at
 least one field. Relevance ranks whole-query exact names/IDs, prefixes, contained name matches,
 all-name word matches, exact tags, then other matches; ties are alphabetical. The empty query is
 alphabetical. An explicitly chosen sort is not replaced when the query changes.
 
-Categories reuse `tags`. Selected categories match **any** selected tag; publisher choices match
-**any** selected group. Query, category and publisher filters combine with **AND**. No selected
+Categories reuse `tags`. Selected categories match **any** selected tag; publisher/kind choices
+match **any** selected group. Plugin facets are Official/Community; theme facets are
+Included in zDeck/Source preview. Query, category and publisher filters combine with **AND**. No selected
 checkbox in a group means all. Missing `provenance` is grouped under **Community**, meaning
 “not classified Official,” not a verified claim about who wrote it. Official is an explicit
 registry-maintainer assertion of zDeck maintenance, supported by the evidence URL and review of

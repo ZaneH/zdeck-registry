@@ -1,12 +1,77 @@
-# Submit a plugin, not a catalogue edit
+# Submit a plugin or theme, not a catalogue edit
 
-One PR targeting `dev`: `registry/plugins/<id>.json` and `registry/readmes/<id>.md`.
+Plugins and themes are separate catalogues. A plugin PR adds `registry/plugins/<id>.json` and
+`registry/readmes/<id>.md`. A theme PR adds a **source preview** under `registry/themes/<id>.json`,
+`registry/theme-readmes/<id>.md`, and two local preview PNGs; see
+[the theme schema](themes.md).
 No account on this site, publishing API, auto-signing, or giant shared list. A source repository,
-README and licence are enough documentation. Optional name/summary/author/tags may be added to
-that one record, not another mandatory form. Counts/stars are not fetched or inferred; see
+README and licence are the foundation. Plugins may optionally add name/summary/author/tags to
+that one record; theme source previews require name, summary and author for comparable browsing. Counts/stars are not fetched or inferred; see
 [registry.md](registry.md) for attributable snapshots and the no-analytics policy.
 
-## Author: source → archive → generated bundle
+## Submit a theme source preview
+
+A community theme is documentation, not a package. It records reviewed source and screenshots of
+the standard `zdeck-sample-deck-1` fixture. There is no theme package format, release record,
+signature, runtime, install action or theme `zdeck://` link. Built-in appearances are maintainer
+curation only; a community PR uses `kind: "source-preview"` with no `builtin`.
+
+Theme authors style existing zDeck controls; they do not reimplement sliders, switches or input behavior. Use the app's [theme development guide](https://github.com/ZaneH/zdeck/blob/dev/docs/theme-development.md) and `Themes/Theme preview` Storybook fixture. The app's `npm run theme:previews` command exports the required dimensions from those real controls; copy its PNGs without cropping or resizing. Custom appearances currently require an app-source change, not installation of a theme file. Integration behavior and future widgets belong to plugins.
+
+One PR targeting `dev`:
+
+- `registry/themes/<id>.json`
+- `registry/theme-readmes/<id>.md`
+- `registry/previews/<id>/desktop.png` (exactly 1200 × 800)
+- `registry/previews/<id>/phone.png` (exactly 390 × 844)
+
+Use the local generator (implemented by the registry maintainers) with an absolute output
+directory:
+
+```sh
+npm run submission:theme -- \
+  --metadata /absolute/theme-metadata.json \
+  --readme /absolute/README.md \
+  --desktop-preview /absolute/desktop.png \
+  --phone-preview /absolute/phone.png \
+  --repo https://github.com/you/zdeck-theme \
+  --commit FULL_40_LOWERCASE_HEX_SOURCE_COMMIT \
+  --output /absolute/new-theme-submission-directory
+```
+
+`--metadata` is a JSON object with the common presentation fields:
+
+```json
+{
+  "id": "example-theme",
+  "name": "Example Theme",
+  "summary": "A reviewed appearance shown on the standard sample deck.",
+  "author": "Example Author",
+  "license": "MIT",
+  "tags": ["appearance", "example"]
+}
+```
+
+Do **not** put `kind`, `builtin`, `repo`, `sourceCommit`, `readme` or `preview` in the metadata
+file; the flags supply the repo and exact commit, and the tool generates those fields plus the two
+preview objects. `tags` is optional. The generator accepts only `id`, `name`, `summary`, `author`,
+`license` and `tags` in the metadata file; it rejects `provenance`, dates, `builtin`, `kind` and
+release/install fields. A maintainer may add reviewed provenance or traceable dates in a separate
+curated edit, not through this community generator. The tool copies the supplied PNGs to the two catalogue paths and writes plain-text preview `alt`
+text from the theme name and viewport; review/edit that wording in the PR if it is not accurate.
+
+The generated `candidate.json` and `PR.md` are review evidence, not publication. The tool creates a
+new output directory with exclusive files; it does not install, sign, upload, fetch a remote asset or
+open a PR. Preview input must be a regular non-symlink PNG, larger than 0 bytes and at most 2 MiB,
+with the exact dimensions above. The build checks the PNG signature and IHDR header only; that is
+not a claim of full image-safety validation. SVG, remote URLs, submitted CSS/code and executable
+content are rejected.
+
+Review the source commit, licence, preview accuracy and the two local PNGs, then merge the generated
+record/README/previews. A source preview is never installable; do not add plugin releases or theme
+install links.
+
+## Author: plugin source → archive → generated bundle
 
 1. Commit the reviewed source. Build a **self-contained**, root-layout `.zdx` ZIP containing
    `manifest.json`, exactly one `main.js` or `main.py`, the packaged SDK/runtime dependencies,

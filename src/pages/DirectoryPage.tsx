@@ -15,7 +15,10 @@ interface DirectoryPageProps {
 }
 
 export function DirectoryPage({ plugins, initialState, onStateChange }: DirectoryPageProps) {
-  const [state, setState] = useState<DirectoryState>({ ...DEFAULT_DIRECTORY, ...initialState });
+  const [state, setState] = useState<DirectoryState>(() => {
+    const merged = { ...DEFAULT_DIRECTORY, ...initialState };
+    return { ...merged, origins: merged.origins.filter((origin) => origin === "official" || origin === "community") };
+  });
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterButton = useRef<HTMLButtonElement>(null);
   const filterId = useId();
