@@ -158,7 +158,7 @@ describe("theme directory selection", () => {
     expect(selectThemes(themes, { ...DEFAULT_DIRECTORY, query: "GLASS" }).map((theme) => theme.id)).toEqual(["glass"]);
     expect(selectThemes(themes, { ...DEFAULT_DIRECTORY, query: "appearance", origins: ["source-preview"] })).toEqual([]);
     expect(selectThemes(themes, { ...DEFAULT_DIRECTORY, categories: ["monospace"] }).map((theme) => theme.id)).toEqual(["terminal"]);
-    expect(selectThemes(themes, { ...DEFAULT_DIRECTORY, origins: ["built-in"], categories: ["lilac"] }).map((theme) => theme.id)).toEqual(["glass"]);
+    expect(selectThemes(themes, { ...DEFAULT_DIRECTORY, origins: ["built-in"], categories: ["graphite"] }).map((theme) => theme.id)).toEqual(["glass"]);
   });
 
   it("round-trips theme kind facets and rejects unknown facet values", () => {

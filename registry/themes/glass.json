@@ -1,28 +1,28 @@
 {
   "id": "glass",
   "name": "Glass",
-  "summary": "A bright lilac appearance with smoked, translucent controls, circular buttons and a tall volume pill.",
+  "summary": "A neutral graphite and silver appearance with compact grids, rounded modules and a tall, thin volume slider.",
   "author": "zDeck",
   "license": "MIT",
   "repo": "https://github.com/ZaneH/zdeck",
   "readme": "glass.md",
   "kind": "built-in",
   "builtin": "glass",
-  "sourceCommit": "c5a1ec849709db6a7d6ac68d6f8a670acdfa352d",
+  "sourceCommit": "bed0c700566a2094d8dd3d59761e11f017e0ee34",
   "preview": {
     "fixture": "zdeck-sample-deck-1",
     "desktop": {
       "src": "previews/glass/desktop.png",
-      "alt": "Glass appearance on the sample deck: lilac wallpaper with cyan and rose pools, circular and capsule controls, and a vertical volume pill."
+      "alt": "Glass appearance on the sample deck: graphite and silver rounded controls in compact grids, a tall thin volume slider and a square Gain dial module."
     },
     "phone": {
       "src": "previews/glass/phone.png",
-      "alt": "Glass appearance on the sample deck phone view: lilac wallpaper, stacked sections and compact smoked controls."
+      "alt": "Glass appearance on the sample deck phone view: compact graphite and silver controls, a tall thin volume slider and a square Gain dial module."
     }
   },
-  "tags": ["appearance", "glass", "lilac"],
+  "tags": ["appearance", "glass", "graphite"],
   "provenance": {
     "kind": "official",
-    "evidence": "https://github.com/ZaneH/zdeck/tree/c5a1ec849709db6a7d6ac68d6f8a670acdfa352d/src"
+    "evidence": "https://github.com/ZaneH/zdeck/tree/bed0c700566a2094d8dd3d59761e11f017e0ee34/src"
   }
 }

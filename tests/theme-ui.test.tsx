@@ -106,7 +106,7 @@ describe("theme detail", () => {
     expect(screen.getByRole("link", { name: "All themes" }).getAttribute("href")).toBe("#/themes?q=glass");
     const images = container.querySelectorAll("img");
     expect(images).toHaveLength(2);
-    expect(images[0].getAttribute("alt")).toContain("lilac");
+    expect(images[0].getAttribute("alt")).toContain("graphite and silver");
     expect(images[0].getAttribute("src")).toBe(THEME_PREVIEW_URLS["previews/glass/desktop.png"]);
     expect(images[1].getAttribute("alt")).toContain("phone");
     expect(container.querySelector('a[href^="zdeck://"]')).toBeNull();

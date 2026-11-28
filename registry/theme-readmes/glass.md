@@ -4,7 +4,7 @@ Glass is a built-in zDeck appearance. It is included in zDeck; there is no packa
 
 ## What it looks like
 
-Glass uses a bright lilac wallpaper with large soft cyan and rose pools. Its controls carry a smoked, translucent material over a solid enough backing to keep labels readable without relying on backdrop blur. One-button controls become circles, wider controls become capsules, and scene/value controls become larger rounded modules. The volume control is a tall vertical pill whose white fill follows the current target value.
+Glass uses a neutral graphite backdrop with silver and smoked controls in compact, capped grids. Buttons, dials and readings use rounded modules; wider toggles use capsules. Dial modules occupy at least two rows and two columns. The volume control is a tall, thin vertical slider whose white fill follows the current target value.
 
 Active toggles turn luminous white with dark glyphs; inactive controls stay smoky. The selected accent remains authoritative. Reduced-motion and forced-colors rules still apply, and the appearance requests no remote fonts or assets.
 
