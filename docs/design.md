@@ -76,8 +76,9 @@ Themes share the plugin directory's shell rather than becoming a card marketplac
 - Rows keep the recessed key/row rhythm, but replace the plugin key well with a small local desktop
   preview thumbnail. They show author, summary, tags and kind. They never show a downloads or
   popularity row: there is no theme metric, so there is no `—` pretending to be one.
-- Theme detail reuses the plugin detail type and panel. It adds a desktop (1200 × 800) and phone
-  (390 × 844) preview of the same sample deck, each with plain-text `alt` and a small caption.
+- Theme detail reuses the plugin detail type and panel. It stacks a desktop (1200 × 800) and phone
+  (390 × 844) preview of the same sample deck at readable widths, each with plain-text `alt`, a
+  small caption and a link to the full-size image.
 - Built-ins say **Included in zDeck**, with the exact **Settings → Appearance** choice and the
   per-section **Theme → …** override. Source previews say **Source preview** and **no installable
   package**. No theme page has an install button or a theme `zdeck://` link.

@@ -629,11 +629,13 @@ h1 {
   font-weight: 600;
 }
 
+/* Stacked so the desktop capture gets the detail column's full width and the phone keeps its
+   390px reading size. Both images stay links to the full-size file. */
 .theme-previews {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 168px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: 16px;
+  gap: 20px;
   padding: 22px 0;
   border-bottom: 1px solid var(--border);
 }
@@ -660,7 +662,7 @@ h1 {
 }
 
 .preview-phone img {
-  max-width: 168px;
+  max-width: 390px;
 }
 
 .theme-guidance {

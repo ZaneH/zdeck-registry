@@ -79,8 +79,10 @@ Example source-preview record:
   `<img>` elements with plain-text `alt`; previews are evidence of one sample deck, not a live
   theme runtime, accessibility audit, performance result or platform-support claim.
 - The checked-in built-in previews were captured from zDeck's authentic `ThemePreview` Storybook
-  fixture (buttons, slider, dial, both toggles and a numeric reading) through a local Chromium
-  browser at the fixed viewports. They are not mock-ups or placeholders.
+  fixture (buttons, slider, dial, both toggles, a numeric reading, and the unknown/failed state
+  examples) through a local Chromium browser at the fixed viewports. The desktop capture fits the
+  fixture's content group into 1200 × 800 without cropping; the phone capture keeps its natural
+  layout. They are not mock-ups or placeholders.
 
 ## Browsing and detail
 
@@ -100,6 +102,6 @@ Example source-preview record:
 
 `glass` and `terminal` are genuine built-in zDeck appearances. Their source repository is
 `https://github.com/ZaneH/zdeck`, licence MIT, and their source commit is
-`4550363f027f7807fd7c6537d4aeb699cfdec9f0`. They are marked Official with an HTTPS source-tree
+`c5a1ec849709db6a7d6ac68d6f8a670acdfa352d` (including the shared preview fixture and Glass spacing corrections). Publish that app commit before publishing these registry references. They are marked Official with an HTTPS source-tree
 evidence URL. Inclusion in this directory does not assert accessibility, performance or
 cross-platform verification beyond the checked preview fixture.

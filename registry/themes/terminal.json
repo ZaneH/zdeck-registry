@@ -8,7 +8,7 @@
   "readme": "terminal.md",
   "kind": "built-in",
   "builtin": "terminal",
-  "sourceCommit": "4550363f027f7807fd7c6537d4aeb699cfdec9f0",
+  "sourceCommit": "c5a1ec849709db6a7d6ac68d6f8a670acdfa352d",
   "preview": {
     "fixture": "zdeck-sample-deck-1",
     "desktop": {
@@ -23,6 +23,6 @@
   "tags": ["appearance", "terminal", "monospace"],
   "provenance": {
     "kind": "official",
-    "evidence": "https://github.com/ZaneH/zdeck/tree/4550363f027f7807fd7c6537d4aeb699cfdec9f0/src"
+    "evidence": "https://github.com/ZaneH/zdeck/tree/c5a1ec849709db6a7d6ac68d6f8a670acdfa352d/src"
   }
 }

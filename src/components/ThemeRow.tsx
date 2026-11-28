@@ -13,7 +13,7 @@ export function ThemeRow({ theme, search = "", sort = "relevance", previewUrl }:
     <li className="plugin-item">
       <a className="plugin-row theme-row" href={`#/theme/${theme.id}${search}`}>
         {previewUrl ? (
-          <img className="theme-thumb" src={previewUrl} alt="" width={960} height={680} loading="lazy" />
+          <img className="theme-thumb" src={previewUrl} alt="" width={1200} height={800} loading="lazy" />
         ) : (
           <span className="key-well" aria-hidden="true"><span className="key-cap">{theme.name.slice(0, 1)}</span></span>
         )}
